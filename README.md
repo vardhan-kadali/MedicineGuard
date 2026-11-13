@@ -90,14 +90,16 @@ scripts\benchmark.bat
 
 ## 📊 Empirical Performance Summary
 
-Benchmarked on a 64-bit Windows workstation using GCC 16.2.0 (`-O3`):
+Benchmarked on a 64-bit Windows workstation using GCC 16.2.0 (`-O3`), 7 measured trials per batch size (median reported), preceded by a discarded warm-up run:
 
-| Batch Size ($N$) | Total Tree Nodes | Tree Build Time | Proof Gen (per unit) | Verify Time (per unit) | Proof Size | In-Memory RAM |
-|---|---|---|---|---|---|---|
-| **100** | 202 | 0.33 ms | 0.81 μs | 10.46 μs | 264 B | 6.5 KB |
-| **1,000** | 2,001 | 3.38 ms | 0.68 μs | 16.50 μs | 372 B | 62.8 KB |
-| **10,000** | 20,005 | 36.69 ms | 0.96 μs | 22.52 μs | 516 B | 625.5 KB |
-| **100,000** | 200,006 | 384.88 ms | 0.96 μs | 27.83 μs | 624 B | 6.10 MB |
+| Batch Size ($N$) | Tree Nodes (Height) | Batch Validation | Pure Tree Build | End-to-End Build | Proof Gen (per unit) | Pure Path Verify | End-to-End Verify | Wire Proof Size | Retained Tree RAM | Peak Process RSS |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **100** | 202 ($h = 8$) | 0.03 ms | 0.40 ms | 0.43 ms | 0.15 μs | 11.49 μs | 12.97 μs | 241 B | 6.5 KB | 3.96 MB |
+| **1,000** | 2,001 ($h = 11$) | 0.29 ms | 2.95 ms | 3.55 ms | 0.19 μs | 13.87 μs | 14.97 μs | 340 B | 62.8 KB | 5.12 MB |
+| **10,000** | 20,005 ($h = 15$) | 2.60 ms | 25.58 ms | 28.79 ms | 0.22 μs | 12.99 μs | 15.30 μs | 472 B | 625.5 KB | 17.79 MB |
+| **100,000** | 200,006 ($h = 18$) | 51.52 ms | 362.79 ms | 428.36 ms | 0.31 μs | 26.90 μs | 29.76 μs | 571 B | 6.10 MB | 40.59 MB |
+
+*Note: For detailed mathematical proofs ($\Theta(N)$ tree construction vs $\Theta(N \log N)$ validation sorting), representative sampling methodology, and memory breakdown, see [docs/COMPLEXITY_ANALYSIS.md](docs/COMPLEXITY_ANALYSIS.md).*
 
 ---
 
@@ -107,3 +109,4 @@ Benchmarked on a 64-bit Windows workstation using GCC 16.2.0 (`-O3`):
 - **Phase 3 (Edge Storage & APIs):** Deploy Cloudflare Pages Functions and Cloudflare D1 for shared batch storage and verification logs.
 - **Phase 4 (Frontend UI & QR Code Scanner):** Implement the unified web application with Manufacturer, Pharmacist, and Customer experiences using `html5-qrcode`.
 - **Phase 5 (Tree Visualizer & Academic Viva Polish):** Interactive canvas tree visualizer highlighting verification paths and academic documentation.
+
