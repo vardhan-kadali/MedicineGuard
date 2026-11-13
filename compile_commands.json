@@ -1,0 +1,27 @@
+[
+  {
+    "directory": "D:/MedicineGuard",
+    "command": "C:/msys64/ucrt64/bin/gcc.exe -std=c11 -Wall -Wextra -O3 -Icore-c/include -c core-c/src/sha256.c -o build/sha256.o",
+    "file": "core-c/src/sha256.c"
+  },
+  {
+    "directory": "D:/MedicineGuard",
+    "command": "C:/msys64/ucrt64/bin/gcc.exe -std=c11 -Wall -Wextra -O3 -Icore-c/include -c core-c/src/merkle.c -o build/merkle.o",
+    "file": "core-c/src/merkle.c"
+  },
+  {
+    "directory": "D:/MedicineGuard",
+    "command": "C:/msys64/ucrt64/bin/gcc.exe -std=c11 -Wall -Wextra -O3 -Icore-c/include -c core-c/tests/test_sha256.c -o build/test_sha256.o",
+    "file": "core-c/tests/test_sha256.c"
+  },
+  {
+    "directory": "D:/MedicineGuard",
+    "command": "C:/msys64/ucrt64/bin/gcc.exe -std=c11 -Wall -Wextra -O3 -Icore-c/include -c core-c/tests/test_merkle.c -o build/test_merkle.o",
+    "file": "core-c/tests/test_merkle.c"
+  },
+  {
+    "directory": "D:/MedicineGuard",
+    "command": "C:/msys64/ucrt64/bin/gcc.exe -std=c11 -Wall -Wextra -O3 -Icore-c/include -c core-c/benchmarks/benchmark.c -o build/benchmark.o",
+    "file": "core-c/benchmarks/benchmark.c"
+  }
+]
