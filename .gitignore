@@ -1,0 +1,23 @@
+# Object files and libraries
+*.o
+*.obj
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+bin/
+build/
+
+# Temporary / benchmark output
+*.log
+*.tmp
+bench_results.txt
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
