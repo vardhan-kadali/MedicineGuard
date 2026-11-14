@@ -323,13 +323,26 @@ Where `[L0]` = SHA-256(0x00 || MG01(unit_0)), `[P01]` = SHA-256(0x01 || L0 || L1
 Each proof is serialized to a compact binary format called **MGP1**:
 
 ```
-┌────────────┬─────────────┬──────────────┬── ... ──┐
-│ "MGP1"     │ leaf_index  │ total_leaves │ steps   │
-│ (4 bytes)  │ (4-byte LE) │ (4-byte LE)  │ (N×33B) │
-└────────────┴─────────────┴──────────────┴── ... ──┘
+┌────────────┬─────────────┬──────────────┬─────────────┬──────────────────────────┐
+│ "MGP1"     │ leaf_index  │ total_leaves │ step_count  │ proof steps              │
+│ (4 bytes)  │ (4-byte BE) │ (4-byte BE)  │ (2-byte BE) │ (step_count × 33 bytes)  │
+└────────────┴─────────────┴──────────────┴─────────────┴──────────────────────────┘
 ```
 
-Each step = 1 direction byte (`0x00` = sibling left, `0x01` = sibling right) + 32 bytes sibling hash.
+**Header Layout (14 bytes total):**
+- **Bytes 0..3 (`magic`):** ASCII `"MGP1"` (`0x4D, 0x47, 0x50, 0x31`)
+- **Bytes 4..7 (`leaf_index`):** 32-bit unsigned big-endian integer ($0 \le \text{leaf\_index} < \text{total\_leaves}$)
+- **Bytes 8..11 (`total_leaves`):** 32-bit unsigned big-endian integer ($N \ge 1$)
+- **Bytes 12..13 (`step_count`):** 16-bit unsigned big-endian integer ($0 \le \text{step\_count} \le 32$)
+
+**Step Payload (`step_count × 33` bytes):**
+Each step encodes one sibling along the authentication path:
+- **32 bytes:** SHA-256 hash of the sibling node
+- **1 byte:** Direction flag:
+  - `0x00` (`SIBLING_LEFT`): Sibling is on the left; parent hash is computed as `SHA-256(0x01 || sibling_hash || current_hash)`
+  - `0x01` (`SIBLING_RIGHT`): Sibling is on the right; parent hash is computed as `SHA-256(0x01 || current_hash || sibling_hash)`
+
+**Total Wire Size:** $14 + 33 \times \text{step\_count}$ bytes. (For example, an $N=1,000$ tree requires at most 10 steps = 344 bytes total).
 
 ### Proof Verification (C, WASM, and Server-Side)
 
@@ -388,28 +401,31 @@ Both migrations have been applied to the production Cloudflare D1 database (`med
 
 ### API Reference
 
+The backend exposes 21 RESTful API endpoints across authentication, administration, manufacturing, pharmacy, and public verification:
+
 | Method | Endpoint | Purpose | Auth |
 |:---|:---|:---|:---|
 | `POST` | `/api/auth/bootstrap` | One-time admin account creation using `BOOTSTRAP_ADMIN_SECRET` | Secret only |
 | `POST` | `/api/auth/login` | Authenticate user, receive HttpOnly session cookie + CSRF token | None |
-| `POST` | `/api/auth/logout` | Revoke current session | Session cookie |
-| `GET` | `/api/auth/session` | Check current session and return user role | Session cookie |
-| `POST` | `/api/auth/change-password` | Change authenticated user's password | Session cookie |
-| `GET` | `/api/admin/users` | List all users | Admin |
+| `POST` | `/api/auth/logout` | Revoke current session and clear session cookie | Session cookie (optional) |
+| `GET` | `/api/auth/session` | Check current session, refresh CSRF token, and return user role | Session cookie (optional) |
+| `POST` | `/api/auth/change-password` | Change authenticated user's password | Any authenticated role |
+| `GET` | `/api/admin/users` | List all registered users | Admin |
 | `POST` | `/api/admin/users` | Create a new user (Manufacturer or Pharmacist) | Admin |
-| `PATCH` | `/api/admin/users/:id` | Enable or disable a user account | Admin |
+| `PATCH` | `/api/admin/users/:id` | Enable or disable a user account (revoking sessions on disable) | Admin |
 | `POST` | `/api/admin/users/:id/reset-password` | Reset a user's password | Admin |
 | `GET` | `/api/manufacturer/batches` | List own batches (or all batches for Admin) | Manufacturer / Admin |
 | `POST` | `/api/manufacturer/batches` | Initiate a new batch with Merkle Root | Manufacturer |
 | `POST` | `/api/manufacturer/batches/:batchId/units` | Upload units with MGP1 proofs (server re-verifies each) | Manufacturer |
-| `POST` | `/api/manufacturer/batches/:batchId/publish` | Finalize and publish a batch | Manufacturer |
-| `POST` | `/api/manufacturer/batches/:batchId/abort` | Abort an uploading batch | Manufacturer |
-| `POST` | `/api/manufacturer/batches/:batchId/revoke` | Revoke a published batch with a reason | Manufacturer |
+| `GET` | `/api/manufacturer/batches/:batchId/units` | List units in batch (supports `?page=`, `?limit=`, `?search=`) | Manufacturer / Admin |
+| `POST` | `/api/manufacturer/batches/:batchId/publish` | Finalize and publish an uploaded batch | Manufacturer |
+| `POST` | `/api/manufacturer/batches/:batchId/abort` | Abort an uploading batch | Manufacturer / Admin |
+| `POST` | `/api/manufacturer/batches/:batchId/revoke` | Revoke a published batch with a reason | Manufacturer / Admin |
 | `GET` | `/api/pharmacist/batches` | List published batches | Pharmacist / Admin / Manufacturer |
 | `GET` | `/api/pharmacist/lookup` | Look up a unit by unit_id (and optionally batch_id) | Pharmacist / Admin / Manufacturer |
-| `POST` | `/api/pharmacist/verifications` | Submit a verification audit log entry | Pharmacist |
-| `GET` | `/api/pharmacist/verifications` | Retrieve own verification audit history | Pharmacist |
-| `GET` | `/api/public/verify` | Public verification by 32-hex reference (no auth) | None |
+| `POST` | `/api/pharmacist/verifications` | Submit a verification audit log entry | Pharmacist / Admin |
+| `GET` | `/api/pharmacist/verifications` | Retrieve verification audit history | Pharmacist / Admin |
+| `GET` | `/api/public/verify` | Public verification by 32-hex reference (no auth, rate-limited) | None |
 
 ### Routing
 
@@ -594,6 +610,10 @@ BOOTSTRAP_ADMIN_SECRET=your_local_secret_here
 **4. Apply database migrations to the local D1 instance**
 
 ```bash
+# Using the npm script shortcut:
+npm run migrate:local
+
+# Or directly with Wrangler:
 npx wrangler d1 migrations apply medicineguard-db --local
 ```
 
@@ -868,7 +888,7 @@ MedicineGuard/
 │   │   └── merkle.h          # Merkle tree, proof, and record structs
 │   ├── src/
 │   │   ├── sha256.c          # FIPS 180-4 SHA-256 implementation
-│   │   └── merkle.c          # Binary Merkle tree, MG01 serialization, MGP1 proofs
+│   │   └── merkle.c          # Binary Merkle tree, MG01 serialization, proof generation & verification
 │   ├── tests/
 │   │   ├── test_sha256.c     # SHA-256 NIST vectors and edge case tests
 │   │   ├── test_merkle.c     # Tree construction, proof, negative security tests
@@ -879,7 +899,7 @@ MedicineGuard/
 │   ├── include/
 │   │   └── wasm_bridge.h     # WASM bridge function declarations
 │   └── src/
-│       └── wasm_bridge.c     # Generational handle pool, WASM C bridge
+│       └── wasm_bridge.c     # Generational handle pool, MGP1 wire serialization, WASM C bridge
 ├── public/
 │   ├── index.html            # Single-page application entry point
 │   ├── css/app.css           # Complete application styles
