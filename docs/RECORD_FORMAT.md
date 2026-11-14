@@ -141,3 +141,4 @@ function serializeMedicineRecord(record) {
 ```
 
 This guarantees bit-for-bit compatibility between client JavaScript and the C WebAssembly engine.
+

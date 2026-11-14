@@ -68,3 +68,4 @@ echo    - build/test_merkle.exe
 echo    - build/benchmark.exe
 echo ====================================================================
 exit /b 0
+

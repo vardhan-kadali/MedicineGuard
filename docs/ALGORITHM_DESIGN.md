@@ -199,10 +199,11 @@ Algorithm VerifyMerkleProof(Record, Proof, ExpectedRoot):
 ## 6. Viva & Oral Exam Reference Questions
 
 1. **Why is tree construction $O(N)$ and not $O(N \log N)$?**  
-   Because the number of nodes at each level halves: $N + N/2 + N/4 + \dots + 1 = 2N - 1$. Computing $2N - 1$ hashes takes linear time $\Theta(N)$.
+   Because parent hashes at level $k$ equal $\lfloor C_k / 2 \rfloor = C_k - C_{k+1}$. The telescoping sum across all levels is $\sum (C_k - C_{k+1}) = C_0 - C_{h-1} = N - 1$. Therefore, the total number of parent SHA-256 compression operations is **strictly $N - 1$**. Adding the $N$ leaf hashes, the total cryptographic hashing operations computed is strictly $N + (N - 1) = 2N - 1 = \Theta(N)$. While odd promotions create additional retained nodes ($T(N) > 2N - 1$), they are copied via `memcpy` without hashing, so the total parent hashes computed is always exactly $N - 1$. (Input duplicate-ID validation using quicksort adds a separate upfront $\Theta(N \log N)$ step).
 2. **Why does verification take $O(\log N)$ time?**  
    Because each level consumes at most one sibling hash. The path height is $\lceil \log_2 N \rceil$, requiring exactly $\le 14$ hash computations for $10,000$ items.
 3. **What happens if someone changes 1 character in the batch ID?**  
    Due to SHA-256 avalanche effect, the leaf hash is completely randomized. As a result, climbing the tree produces a completely different root that fails constant-time comparison.
 4. **Why do we promote odd nodes instead of duplicating them like Bitcoin?**  
    Duplicating odd nodes creates identical internal nodes that allow proof spoofing (CVE-2012-2459). Promoting solitary nodes prevents tree collisions.
+

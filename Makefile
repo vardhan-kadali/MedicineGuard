@@ -41,3 +41,4 @@ clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
 .PHONY: all dirs tests benchmark check run-benchmark clean
+

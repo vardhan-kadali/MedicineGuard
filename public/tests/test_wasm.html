@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedicineGuard - WebAssembly Verification & Parity Test Suite</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --accent: #38bdf8;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            background-color: #0369a1;
+            color: #e0f2fe;
+            font-weight: 600;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+            font-family: var(--font-mono);
+        }
+
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-accent { color: var(--accent); }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--surface-color);
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent);
+            transition: width 0.1s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            background-color: #0b1120;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            max-height: 480px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+        }
+
+        .log-entry {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .pill {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .pill-pass {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .pill-fail {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .suite-header {
+            color: var(--accent);
+            font-weight: 700;
+            margin: 0.75rem 0 0.25rem 0;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                MedicineGuard
+                <span class="badge">WebAssembly Test Runner</span>
+            </h1>
+            <p class="subtitle">
+                Automated cryptographic, architectural parity and tamper-resistance verification for the C &rarr; WebAssembly Merkle Tree engine.
+            </p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card">
+                <div class="card-title">Total Tests</div>
+                <div class="card-value text-accent" id="stat-total">0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Passed</div>
+                <div class="card-value text-success" id="stat-passed">0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Failed</div>
+                <div class="card-value text-danger" id="stat-failed">0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Duration</div>
+                <div class="card-value" id="stat-time">0 ms</div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+
+        <div class="controls">
+            <button id="run-btn">Run Test Suite</button>
+            <button id="clear-btn" style="background-color: var(--surface-color); border: 1px solid var(--border-color);">Clear Output</button>
+        </div>
+
+        <div class="log-container" id="log-output">
+            <div style="color: var(--text-secondary);">Ready. Click "Run Test Suite" to execute tests inside your browser.</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import {
+            MedicineGuard,
+            serializeMedicineRecord,
+            parseProof,
+            bytesToHex,
+            hexToBytes,
+            StatusCode
+        } from '../js/wasm-loader.js';
+
+        const runBtn = document.getElementById('run-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const logOutput = document.getElementById('log-output');
+        const statTotal = document.getElementById('stat-total');
+        const statPassed = document.getElementById('stat-passed');
+        const statFailed = document.getElementById('stat-failed');
+        const statTime = document.getElementById('stat-time');
+        const progressBar = document.getElementById('progress-bar');
+
+        let total = 0;
+        let passed = 0;
+        let failed = 0;
+
+        function log(msg, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            if (type === 'pass') {
+                entry.innerHTML = `<span class="pill pill-pass">PASS</span><span>${escapeHtml(msg)}</span>`;
+            } else if (type === 'fail') {
+                entry.innerHTML = `<span class="pill pill-fail">FAIL</span><span>${escapeHtml(msg)}</span>`;
+            } else if (type === 'suite') {
+                entry.className = 'suite-header';
+                entry.textContent = msg;
+            } else {
+                entry.innerHTML = `<span>${escapeHtml(msg)}</span>`;
+            }
+
+            logOutput.appendChild(entry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function assert(condition, message) {
+            total++;
+            statTotal.textContent = total;
+            if (!condition) {
+                failed++;
+                statFailed.textContent = failed;
+                log(message, 'fail');
+                throw new Error(message);
+            } else {
+                passed++;
+                statPassed.textContent = passed;
+                log(message, 'pass');
+            }
+        }
+
+        function assertThrows(fn, expectedSubstr, message) {
+            total++;
+            statTotal.textContent = total;
+            let threw = false;
+            let actualMsg = '';
+            try {
+                fn();
+            } catch (e) {
+                threw = true;
+                actualMsg = e.message;
+            }
+            if (!threw) {
+                failed++;
+                statFailed.textContent = failed;
+                log(`${message} (Expected throw, but succeeded)`, 'fail');
+                throw new Error(`Expected throw: ${message}`);
+            }
+            if (expectedSubstr && !actualMsg.includes(expectedSubstr)) {
+                failed++;
+                statFailed.textContent = failed;
+                log(`${message} (Mismatch message: got "${actualMsg}")`, 'fail');
+                throw new Error(`Message mismatch: ${message}`);
+            }
+            passed++;
+            statPassed.textContent = passed;
+            log(message, 'pass');
+        }
+
+        async function executeSuite() {
+            runBtn.disabled = true;
+            logOutput.innerHTML = '';
+            total = 0;
+            passed = 0;
+            failed = 0;
+            statTotal.textContent = '0';
+            statPassed.textContent = '0';
+            statFailed.textContent = '0';
+            progressBar.style.width = '0%';
+            progressBar.style.backgroundColor = 'var(--accent)';
+
+            const startTime = performance.now();
+
+            try {
+                log('Initializing WebAssembly module...', 'info');
+                const engine = await MedicineGuard.init();
+                assert(engine !== null, 'MedicineGuard module initialized');
+
+                // 1. Primitive SHA-256
+                log('Suite 1: NIST SHA-256 Test Vectors', 'suite');
+                assert(engine.sha256Hex('') === 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'Empty string NIST vector matches');
+                assert(engine.sha256Hex('abc') === 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', '"abc" NIST vector matches');
+                assert(engine.sha256Hex('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq') === '248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1', '56-byte message NIST vector matches');
+
+                // 2. MG01 Serialization
+                log('Suite 2: MG01 Record Serialization & Validation', 'suite');
+                const validRec = {
+                    batch_id: 'BATCH-2026-0001',
+                    unit_id: 'UNIT-000001',
+                    medicine_name: 'Amoxicillin 500mg',
+                    manufacturing_date: '2026-01-15',
+                    expiry_date: '2028-01-15'
+                };
+                const mg01Bytes = serializeMedicineRecord(validRec);
+                assert(mg01Bytes.length > 24, 'Serialized record has valid length');
+                assert(mg01Bytes[0] === 0x4d && mg01Bytes[1] === 0x47 && mg01Bytes[2] === 0x30 && mg01Bytes[3] === 0x31, 'Header magic is MG01');
+
+                assertThrows(() => serializeMedicineRecord({ ...validRec, batch_id: '' }), 'batch_id cannot be empty', 'Rejects empty batch_id');
+                assertThrows(() => serializeMedicineRecord({ ...validRec, manufacturing_date: 'invalid-date' }), 'Invalid manufacturing_date format', 'Rejects invalid date format');
+                assertThrows(() => serializeMedicineRecord({ ...validRec, unit_id: 'UNIT\0NULL' }), 'embedded null characters', 'Rejects embedded null characters');
+
+                // 3. Golden Vectors
+                log('Suite 3: Native C Parity & Golden Root Vectors', 'suite');
+                const goldenVectors = [
+                    { n: 1, height: 1, root: '5d761d5f85dfe7c4b8bc8bec332649908458bd83e6a34cea9265608ac0e94bbb' },
+                    { n: 2, height: 2, root: 'af02709fa129af36821633b77b837c1a6a0efd8205594c4f50663cb88f8d5e52' },
+                    { n: 3, height: 3, root: '5da0c7409089f6e7983ffd458e565e7c29f9b48b937e82a171c5973e9b7eb152' },
+                    { n: 5, height: 4, root: 'a343d4ec527cb9b28072e451d492bf563c70de09d821b968c3a129e1b4a33c86' },
+                    { n: 7, height: 4, root: '1b5230d15958d1e7c02d70c076c1a9bec783af1031ea79462ede7a2095f6c988' },
+                    { n: 8, height: 4, root: '1724712c9d47c22951d3d2c7403cfdcf0659c58b1b6f2330c178c7decd3f4274' },
+                    { n: 100, height: 8, root: '49b79857a4ae9e544d87aa0b723382494dcd5f68775958d8a8affa735a6a01f0' },
+                    { n: 1000, height: 11, root: 'f95ddec8799732ab9093cd5a94a13ce6795b6774bde436a7d9df8972b030e080' }
+                ];
+
+                for (const g of goldenVectors) {
+                    const batch = engine.createBatch();
+                    for (let i = 1; i <= g.n; i++) {
+                        batch.addRecord({
+                            batch_id: 'BATCH-2026-0001',
+                            unit_id: `UNIT-${String(i).padStart(6, '0')}`,
+                            medicine_name: 'Amoxicillin 500mg',
+                            manufacturing_date: '2026-01-15',
+                            expiry_date: '2028-01-15'
+                        });
+                    }
+                    batch.buildTree();
+                    assert(batch.getLeafCount() === g.n, `N=${g.n}: leaf count is ${g.n}`);
+                    assert(batch.getHeight() === g.height, `N=${g.n}: tree height is ${g.height}`);
+                    assert(batch.getRootHex() === g.root, `N=${g.n}: root matches native GCC bit-for-bit`);
+                    batch.destroy();
+                }
+
+                // 4. Proof Generation & Dual Verification
+                log('Suite 4: Proof Generation & Dual Verification', 'suite');
+                for (const n of [1, 2, 3, 5, 8]) {
+                    const batch = engine.createBatch();
+                    const records = [];
+                    for (let i = 1; i <= n; i++) {
+                        const rec = {
+                            batch_id: 'BATCH-PROOF',
+                            unit_id: `UNIT-${String(i).padStart(6, '0')}`,
+                            medicine_name: 'Paracetamol 500mg',
+                            manufacturing_date: '2026-02-01',
+                            expiry_date: '2028-02-01'
+                        };
+                        records.push(rec);
+                        batch.addRecord(rec);
+                    }
+                    batch.buildTree();
+                    const rootHex = batch.getRootHex();
+
+                    for (let i = 0; i < n; i++) {
+                        const proof = batch.generateProof(i);
+                        const parsed = parseProof(proof);
+                        assert(parsed.leafIndex === i, `N=${n}, leaf=${i}: proof index matches`);
+                        
+                        const vRec = engine.verifyRecord(records[i], proof, rootHex);
+                        assert(vRec.valid === true, `N=${n}, leaf=${i}: verifyRecord succeeds`);
+
+                        const serialized = serializeMedicineRecord(records[i]);
+                        const leafData = new Uint8Array(1 + serialized.length);
+                        leafData[0] = 0x00;
+                        leafData.set(serialized, 1);
+                        const leafHash = engine.sha256(leafData);
+                        const vLeaf = engine.verifyLeafHash(leafHash, proof, rootHex);
+                        assert(vLeaf.valid === true, `N=${n}, leaf=${i}: verifyLeafHash succeeds`);
+                    }
+                    batch.destroy();
+                }
+
+                // 5. Negative Security Tests
+                log('Suite 5: Negative Security & Tamper Resistance', 'suite');
+                const batchSec = engine.createBatch();
+                batchSec.addRecord(validRec);
+                batchSec.addRecord({ ...validRec, unit_id: 'UNIT-000002' });
+                batchSec.buildTree();
+                const rootSec = batchSec.getRootHex();
+                const proofSec = batchSec.generateProof(0);
+
+                const vTampered = engine.verifyRecord({ ...validRec, medicine_name: 'Fake Med' }, proofSec, rootSec);
+                assert(vTampered.valid === false && vTampered.status === StatusCode.ERR_ROOT_MISMATCH, 'Altered medicine_name fails verification');
+
+                const bitFlippedProof = new Uint8Array(proofSec);
+                bitFlippedProof[14] ^= 0x01;
+                const vBitFlip = engine.verifyRecord(validRec, bitFlippedProof, rootSec);
+                assert(vBitFlip.valid === false && vBitFlip.status === StatusCode.ERR_ROOT_MISMATCH, 'Bit-flipped sibling hash fails verification');
+
+                const wrongDirProof = new Uint8Array(proofSec);
+                wrongDirProof[14 + 32] ^= 0x01;
+                const vWrongDir = engine.verifyRecord(validRec, wrongDirProof, rootSec);
+                assert(vWrongDir.valid === false && vWrongDir.status === StatusCode.ERR_INVALID_MGP1_PROOF, 'Inverted direction flag rejected');
+
+                const corruptedMagic = new Uint8Array(proofSec);
+                corruptedMagic[0] = 0x5a;
+                const vBadMagic = engine.verifyRecord(validRec, corruptedMagic, rootSec);
+                assert(vBadMagic.valid === false && vBadMagic.status === StatusCode.ERR_INVALID_MGP1_PROOF, 'Corrupted magic rejected');
+
+                batchSec.destroy();
+
+                // 6. Handle Lifecycle & Stress
+                log('Suite 6: Handle Pool Lifecycle & Stress Loop', 'suite');
+                const b1 = engine.createBatch();
+                const h1 = b1.handle;
+                b1.destroy();
+                const b2 = engine.createBatch();
+                const h2 = b2.handle;
+                assert(h1 !== h2, `Handle generation increments: ${h1} -> ${h2}`);
+                b2.destroy();
+
+                for (let cycle = 0; cycle < 50; cycle++) {
+                    const ctx = engine.createBatch();
+                    ctx.addRecord({ ...validRec, unit_id: `UNIT-${cycle}` });
+                    ctx.buildTree();
+                    assert(ctx.getRootHex().length === 64, `Stress cycle ${cycle} OK`);
+                    ctx.destroy();
+                }
+
+                log('All browser verification tests passed successfully!', 'suite');
+                progressBar.style.width = '100%';
+                progressBar.style.backgroundColor = 'var(--success)';
+
+            } catch (e) {
+                log(`Test run aborted due to error: ${e.message}`, 'fail');
+                progressBar.style.width = '100%';
+                progressBar.style.backgroundColor = 'var(--danger)';
+            } finally {
+                const elapsed = Math.round(performance.now() - startTime);
+                statTime.textContent = `${elapsed} ms`;
+                runBtn.disabled = false;
+            }
+        }
+
+        runBtn.addEventListener('click', executeSuite);
+        clearBtn.addEventListener('click', () => {
+            logOutput.innerHTML = '<div style="color: var(--text-secondary);">Output cleared.</div>';
+            statTotal.textContent = '0';
+            statPassed.textContent = '0';
+            statFailed.textContent = '0';
+            statTime.textContent = '0 ms';
+            progressBar.style.width = '0%';
+        });
+
+        // Auto-run tests when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            executeSuite();
+        });
+    </script>
+</body>
+</html>
+

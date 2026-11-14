@@ -1,0 +1,25 @@
+{
+  "name": "medicineguard",
+  "version": "1.0.0",
+  "description": "Medicine Batch Traceability and Verification Using Merkle Trees",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public --d1=DB",
+    "migrate:local": "wrangler d1 migrations apply medicineguard-db --local",
+    "test:native": "cmd /c .\\scripts\\test.bat",
+    "test:wasm": "cmd /c .\\scripts\\test_wasm.bat",
+    "test:phase3b": "node scripts/audit_phase3b.js",
+    "test:phase3c": "node scripts/test_phase3c.js",
+    "test:phase3d": "node scripts/test_phase3d.mjs",
+    "test:phase4": "node scripts/test_phase4.mjs",
+    "test:phase5": "node scripts/test_phase5.mjs",
+    "test:all": "npm run test:native && npm run test:wasm && npm run test:phase3b && npm run test:phase3c && npm run test:phase3d && npm run test:phase4 && npm run test:phase5"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0 || ^4.0.0"
+  },
+  "dependencies": {
+    "jsqr": "^1.4.0",
+    "qrcode-generator": "^2.0.4"
+  }
+}

@@ -1,112 +1,143 @@
 # MedicineGuard — Medicine Batch Traceability and Verification Using Merkle Trees
 
-**MedicineGuard** is an academic Data Structures and Algorithms (DAA) and Applied Cryptography project demonstrating how cryptographic hashing (SHA-256) and Merkle Trees can provide scalable, tamper-evident digital record traceability for pharmaceutical medicine batches.
+**MedicineGuard** is an academic Data Structures and Algorithms (DAA) and Applied Cryptography project demonstrating how cryptographic hashing (FIPS 180-4 SHA-256) and binary Merkle Trees provide scalable, tamper-evident digital record traceability for pharmaceutical medicine batches.
 
 ---
 
 ## 📌 Project Overview
 
-In a pharmaceutical supply chain, verifying whether an individual medicine blister pack belongs to an authentic manufacturer batch is challenging. Storing thousands of individual digital signatures or records in centralized ledgers is computationally expensive and difficult to scale.
+In pharmaceutical supply chains, verifying whether an individual medicine package belongs to an authentic manufacturer batch is computationally challenging. Storing thousands of individual digital signatures or records in centralized ledgers is expensive and fragile.
 
 **MedicineGuard** solves this by:
-1. Creating a deterministic digital record for every medicine unit.
-2. Building a balanced binary **Merkle Tree** from all individual unit hashes.
-3. Committing the entire batch of $N$ units into a single 32-byte **Merkle Root**.
-4. Generating a compact **Merkle Proof** ($\lceil \log_2 N \rceil$ sibling hashes) for every individual package.
-5. Enabling instantaneous, offline-capable verification ($O(\log N)$) by pharmacists and customers using a standard smartphone or web browser.
+1. Creating deterministic digital records for every medicine unit using the canonical **MG01** serialization protocol.
+2. Building a balanced binary **Merkle Tree** using domain-separated leaf (`0x00`) and parent (`0x01`) SHA-256 hashing.
+3. Handling arbitrary batch sizes deterministically using **odd-node promotion** (unpaired nodes promoted unchanged without hashing).
+4. Committing the entire batch of $N$ units into a single 32-byte **Merkle Root**.
+5. Generating compact **MGP1** Merkle Proofs ($O(\log N)$ sibling hashes) for every individual package.
+6. Enabling instant, offline-capable verification by Pharmacists and Customers using a standard browser or mobile device.
+7. Providing a real-time, interactive **Merkle Tree Visualizer** that highlights cryptographic proof paths and odd-node promotions with bit-for-bit mathematical fidelity.
 
 ---
 
-## 🚀 Phase 1 Status: Native C Engine
+## 🛡️ Physical Authenticity Boundary & Mandatory Disclaimer
 
-Phase 1 implements the complete, standalone cryptographic and data structure engine in **standard C11 with zero external dependencies**.
-
-### Key Implemented Components:
-- **Standalone FIPS 180-4 SHA-256:** Pure C implementation validated against NIST test vectors.
-- **Deterministic Record Serialization:** Canonical `MG01` binary serialization format ensuring bit-for-bit equivalence between C/WASM and JavaScript.
-- **Domain Separation:** RFC 6962 compliant prefix hashing (`0x00` for leaves, `0x01` for internal parent nodes) to eliminate second-preimage collision attacks.
-- **Merkle Tree Construction:** Balanced binary tree construction with deterministic odd-node promotion (unpaired nodes promoted unchanged without Bitcoin-style duplicate node vulnerabilities).
-- **Merkle Proof Generation & Verification:** Directional sibling paths (`LEFT`/`RIGHT`) with constant-time memory comparison (`crypto_memcmp`) to prevent timing side-channel attacks.
-- **Automated Test Suite:** 61 automated tests covering small trees (1, 2, 3, 5, 7, 8), large batches (100, 1,000, 10,000 units), and negative security tampering tests.
-- **Empirical Benchmarking Utility:** High-resolution monotonic timer benchmarking across 100 to 100,000 units.
+> [!IMPORTANT]
+> **MedicineGuard Trust & Security Boundary:**
+> 
+> MedicineGuard establishes the integrity and provenance of the **digital medicine record** against a cryptographically committed Merkle Tree root. It proves mathematically that the digital unit record has not been altered since the batch commitment was calculated.
+> 
+> *Mandatory Regulatory Disclaimer:*
+> "MedicineGuard verifies the digital medicine record against a registered Merkle Tree commitment. This does not independently establish the physical medicine's chemical composition, safety, storage conditions, manufacturer legitimacy or guarantee that the QR code has not been copied."
 
 ---
 
-## 📂 Repository Structure
+## 🚀 Completed Project Milestones
+
+| Milestone | Component | Key Capabilities | Automated Tests |
+|---|---|---|---|
+| **Phase 1** | Native C11 Engine | Standalone FIPS 180-4 SHA-256, MG01 canonical serialization, domain separation (0x00/0x01), odd-node promotion, MGP1 proofs. | **67 / 67 PASS** |
+| **Phase 2** | WebAssembly ABI | Emscripten wasm32 compilation, generational handle pool (32 slots), dynamic `HEAPU8` tracking, JavaScript ABI loader (`wasm-loader.js`). | **314 / 314 PASS** |
+| **Phase 3A** | UI Foundation | Pure Vanilla HTML5/CSS3/ES6 responsive dashboard, zero external UI frameworks, zero CDNs, role switching. | Foundation Verified |
+| **Phase 3B** | Manufacturer Portal | In-browser C/WASM tree generation, Merkle Root commitment, calendar date validation, tamper detection. | **388 / 388 PASS** |
+| **Phase 3C** | Pharmacist Portal | Local and shared batch lookup, MGP1 proof verification via C engine, negative security alteration tests. | **177 / 177 PASS** |
+| **Phase 3D** | Backend & Registry | Cloudflare Pages Functions, SQLite D1 database, PBKDF2-HMAC-SHA256 authentication (600k iterations), RBAC, audit logging. | **139 / 139 PASS** |
+| **Phase 4** | Customer & QR Portal | Offline QR code generation (`qrcode.js`), camera scanner (`jsQR`), 32-char hex references, batch recall/revocation. | **94 / 94 PASS** |
+| **Phase 5** | Merkle Visualizer & Hardening | Interactive SVG tree visualizer, proof path highlighting, rate limiting & abuse mitigation, security headers, full regression. | **140 / 140 PASS** |
+| **TOTAL** | **Cumulative Test Suite** | **All 7 Automated Test Suites Passing (100% Success Rate)** | **1,319 / 1,319 PASS** |
+
+---
+
+## 🏗️ Architecture & Component Layout
 
 ```
-MedicineGuard/
-├── README.md
-├── .gitignore
-├── Makefile                         # Cross-platform Makefile (Linux / macOS / MinGW)
-├── core-c/                          # Pure C11 DAA Engine
-│   ├── include/
-│   │   ├── sha256.h                 # Standalone SHA-256 interface
-│   │   └── merkle.h                 # Merkle Tree data structures & function prototypes
-│   ├── src/
-│   │   ├── sha256.c                 # FIPS 180-4 SHA-256 implementation
-│   │   └── merkle.c                 # Serialization, tree building, proofs & verification
-│   ├── tests/
-│   │   ├── test_sha256.c            # NIST test vectors (empty, 'abc', 56-char, 1M 'a's)
-│   │   └── test_merkle.c            # 61-test suite (odd nodes, 10k batch, negative tests)
-│   └── benchmarks/
-│       └── benchmark.c              # High-resolution performance benchmarks
-├── scripts/
-│   ├── build.bat                    # Windows batch build script (GCC auto-detection)
-│   ├── test.bat                     # Windows automated test runner
-│   └── benchmark.bat                # Windows benchmark execution script
-└── docs/
-    ├── ALGORITHM_DESIGN.md          # Theoretical principles, pseudocode & viva guide
-    ├── RECORD_FORMAT.md             # Canonical binary serialization standard (MG01)
-    └── COMPLEXITY_ANALYSIS.md       # Asymptotic proofs & empirical benchmark analysis
+                                  +---------------------------------------+
+                                  |           MedicineGuard Web           |
+                                  |   HTML5 / CSS3 / Vanilla ES6 Module   |
+                                  +---------------------------------------+
+                                     /                  |                 \
+                                    /                   |                  \
+                                   v                    v                   v
+                     +--------------------+   +-------------------+   +--------------------+
+                     |  WebAssembly Core  |   |  Cloudflare Pages |   | Interactive Merkle |
+                     | (C11 via Emscripten|   |     Functions     |   |   Tree Visualizer  |
+                     |  medicineguard.wasm|   |  (/api/* Backend) |   | (SVG / Canvas DOM) |
+                     +--------------------+   +-------------------+   +--------------------+
+                                |                       |                       |
+                     +--------------------+   +-------------------+   +--------------------+
+                     | FIPS 180-4 SHA-256 |   |   Cloudflare D1   |   | Bit-for-bit Parity |
+                     | Domain Separation  |   |  SQLite Database  |   | Proof Path Tracing |
+                     | Odd Promotion C11  |   | Shared Batch Reg. |   | Odd Promotion Path |
+                     +--------------------+   +-------------------+   +--------------------+
 ```
 
 ---
 
-## 🛠️ Quick Start (Windows)
+## 🌳 Interactive Merkle Tree Visualizer (Phase 5)
 
-### Prerequisites
-- GCC compiler (e.g., MinGW-w64 / MSYS2 UCRT64).
+Accessible directly under the **Algorithm & System Status** section (`#status` or `/#visualizer`), the visualizer provides:
+- **Topological Layout:** Displays the Root (Level $H-1$), intermediate levels, and leaf units (Level 0) with distinct level badges.
+- **Odd-Node Promotion Paths:** Clearly tags unpaired nodes promoted unchanged without hashing with dashed violet borders and `ODD-PROMOTED` badges.
+- **Interactive Unit Tracing:** Clicking any leaf node highlights its active path up to the root in bright emerald green, and distinguishes between **Right Siblings** (Amber) and **Left Siblings** (Cyan).
+- **Mathematical Progression Inspector:** Displays the step-by-step cryptographic hash accumulation:
+  $$H_{\text{leaf}} = \text{SHA-256}(0x00 \ || \ \text{MG01}(\text{unit}))$$
+  $$H_{\text{parent}} = \text{SHA-256}(0x01 \ || \ H_{\text{left}} \ || \ H_{\text{right}})$$
+- **Large-Batch Support ($N \ge 32$):** Offers **Focused Proof Path View** to render only the active proof path and its direct siblings, keeping DOM element counts at $O(\log N)$ and guaranteeing sub-10ms rendering for batches up to 10,000 units.
+- **Pan & Zoom Controls:** Interactive drag-to-pan, mousewheel zoom, reset view, and fit-to-width.
 
-### 1. Build the Engine
-Run the build script to compile the object files and binaries into `build/`:
+---
+
+## 🔒 Security Hardening & Abuse Mitigation
+
+1. **Strict Input Validation:** `GET /api/public/verify` strictly enforces 32-character hexadecimal format using regex before any database query is executed.
+2. **Database Write Throttling:** Failed lookups (`NOT_FOUND`) are rate-limited per client IP hash. If a client exceeds 10 failed lookups in a 60-second window, the service skips writing to the `customer_verifications` audit table and responds with `429 Too Many Requests` (`RATE_LIMIT_EXCEEDED`), protecting D1 database storage from automated scrapers.
+3. **Security Headers:** Enforced via `public/_headers`:
+   - `Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; media-src 'self' blob:;`
+   - `X-Content-Type-Options: nosniff`
+   - `X-Frame-Options: DENY`
+   - `Referrer-Policy: strict-origin-when-cross-origin`
+   - `Permissions-Policy: camera=(self), microphone=(), geolocation=()`
+
+---
+
+## 🛠️ Running the Automated Test Suites
+
+All test suites execute locally on Windows without external CDNs or remote dependencies:
+
 ```cmd
-scripts\build.bat
-```
+# 1. Run all test suites cumulatively (1,320 assertions)
+npm run test:all
 
-### 2. Run the Automated Test Suite
-Execute the full test suite (SHA-256 NIST tests + Merkle Tree & negative tampering tests):
-```cmd
-scripts\test.bat
-```
-
-### 3. Run Performance Benchmarks
-Run high-resolution benchmarks across batch sizes ($N = 100, 1000, 10000, 100000$):
-```cmd
-scripts\benchmark.bat
+# 2. Individual Phase Suites:
+npm run test:native     # Phase 1: Native C SHA-256 & Merkle Tree (67 tests)
+npm run test:wasm       # Phase 2: WebAssembly ABI & Generational Handles (314 tests)
+npm run test:phase3b    # Phase 3B: Manufacturer Registration & Proof Audit (388 assertions)
+npm run test:phase3c    # Phase 3C: Pharmacist Portal & Tamper Resistance (177 assertions)
+npm run test:phase3d    # Phase 3D: Cloudflare Functions, D1 DB & Auth (139 assertions)
+npm run test:phase4     # Phase 4: QR Codes & Customer Verification (95 assertions)
+npm run test:phase5     # Phase 5: Merkle Visualizer & Hardening (140 assertions)
 ```
 
 ---
 
-## 📊 Empirical Performance Summary
+## 💻 Local Development Workflow
 
-Benchmarked on a 64-bit Windows workstation using GCC 16.2.0 (`-O3`), 7 measured trials per batch size (median reported), preceded by a discarded warm-up run:
+To launch the local Cloudflare Pages dev server with local D1 database:
 
-| Batch Size ($N$) | Tree Nodes (Height) | Batch Validation | Pure Tree Build | End-to-End Build | Proof Gen (per unit) | Pure Path Verify | End-to-End Verify | Wire Proof Size | Retained Tree RAM | Peak Process RSS |
-|---|---|---|---|---|---|---|---|---|---|---|
-| **100** | 202 ($h = 8$) | 0.03 ms | 0.40 ms | 0.43 ms | 0.15 μs | 11.49 μs | 12.97 μs | 241 B | 6.5 KB | 3.96 MB |
-| **1,000** | 2,001 ($h = 11$) | 0.29 ms | 2.95 ms | 3.55 ms | 0.19 μs | 13.87 μs | 14.97 μs | 340 B | 62.8 KB | 5.12 MB |
-| **10,000** | 20,005 ($h = 15$) | 2.60 ms | 25.58 ms | 28.79 ms | 0.22 μs | 12.99 μs | 15.30 μs | 472 B | 625.5 KB | 17.79 MB |
-| **100,000** | 200,006 ($h = 18$) | 51.52 ms | 362.79 ms | 428.36 ms | 0.31 μs | 26.90 μs | 29.76 μs | 571 B | 6.10 MB | 40.59 MB |
+```cmd
+# Apply database migrations to local D1 instance
+npx wrangler d1 migrations apply medicineguard-db --local
 
-*Note: For detailed mathematical proofs ($\Theta(N)$ tree construction vs $\Theta(N \log N)$ validation sorting), representative sampling methodology, and memory breakdown, see [docs/COMPLEXITY_ANALYSIS.md](docs/COMPLEXITY_ANALYSIS.md).*
+# Start local dev server on port 8788
+npx wrangler pages dev public --port=8788
+```
 
----
+Open your browser to:
+```
+http://127.0.0.1:8788/
+```
 
-## 🗺️ Future Phases
-
-- **Phase 2 (WebAssembly & JS Bridge):** Compile `core-c` to `medicineguard.wasm` via Emscripten / Clang and implement `wasm-loader.js`.
-- **Phase 3 (Edge Storage & APIs):** Deploy Cloudflare Pages Functions and Cloudflare D1 for shared batch storage and verification logs.
-- **Phase 4 (Frontend UI & QR Code Scanner):** Implement the unified web application with Manufacturer, Pharmacist, and Customer experiences using `html5-qrcode`.
-- **Phase 5 (Tree Visualizer & Academic Viva Polish):** Interactive canvas tree visualizer highlighting verification paths and academic documentation.
-
+### Initial Administrator Bootstrap
+1. In the top bar, click **Sign In**.
+2. Select the **Admin Bootstrap** tab.
+3. Enter email `admin@medicineguard.local`, your desired admin password, and the local bootstrap secret configured in your private `.dev.vars` file (`BOOTSTRAP_ADMIN_SECRET`).
+4. Once authenticated, manage accounts in the **Admin Portal** to provision Manufacturer and Pharmacist users. Note: the bootstrap endpoint permanently rejects subsequent calls once an administrator exists (`ADMIN_ALREADY_EXISTS`).

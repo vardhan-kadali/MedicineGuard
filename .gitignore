@@ -19,5 +19,24 @@ bench_results.txt
 # Editor and OS files
 .vscode/
 .idea/
+.cache/
 .DS_Store
 Thumbs.db
+
+# Cloudflare Wrangler & Local Secrets
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+
+# Local databases and runtime state
+.wrangler/
+*.sqlite*
+node_modules/
+
+# Local diagnostic screenshots
+screenshot*.png
+
+

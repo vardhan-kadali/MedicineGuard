@@ -1,0 +1,4 @@
+# MedicineGuard Local Development Environment Secrets
+# Copy this file to .dev.vars and customize if needed.
+BOOTSTRAP_ADMIN_SECRET=medicineguard_bootstrap_secret_change_me
+

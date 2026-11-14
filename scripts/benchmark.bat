@@ -18,3 +18,4 @@ echo.
 echo [BENCHMARK] Executing across batch sizes (100, 1,000, 10,000, 100,000)...
 build\benchmark.exe
 exit /b %ERRORLEVEL%
+

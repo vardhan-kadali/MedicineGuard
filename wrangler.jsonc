@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "medicineguard",
+  "compatibility_date": "2024-09-23",
+  "pages_build_output_dir": "public",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "medicineguard-db",
+      "database_id": "local-d1-db",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
+

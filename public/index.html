@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedicineGuard — Medicine Batch Traceability & Verification</title>
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Backdrop for mobile drawer navigation -->
+        <div id="sidebar-backdrop" class="backdrop"></div>
+
+        <!-- Left Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-wrapper">
+                    <div class="brand-icon">
+                        <!-- Shield & Medical Cross SVG -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M12 8v8"/>
+                            <path d="M8 12h8"/>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h1>MedicineGuard</h1>
+                        <span class="brand-tagline">Batch Traceability</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="role-picker-container">
+                <div class="role-picker-label">Active Experience</div>
+                <select id="role-select" class="role-select-box" aria-label="Select User Role">
+                    <option value="overview">System Overview</option>
+                    <option value="manufacturer">Manufacturer</option>
+                    <option value="pharmacist">Pharmacist</option>
+                    <option value="customer">Customer Verification</option>
+                    <option id="role-option-admin" value="admin" style="display: none;">Administrator</option>
+                </select>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <div class="nav-group-title">Platform Navigation</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link active" data-section="overview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#manufacturer" class="nav-link" data-section="manufacturer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                                <path d="M17 18h1"/>
+                                <path d="M12 18h1"/>
+                                <path d="M7 18h1"/>
+                            </svg>
+                            <span>Manufacturer</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#pharmacist" class="nav-link" data-section="pharmacist">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+                                <path d="m8.5 8.5 7 7"/>
+                            </svg>
+                            <span>Pharmacist</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#customer" class="nav-link" data-section="customer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M7 7h.01"/>
+                                <path d="M17 7h.01"/>
+                                <path d="M7 17h.01"/>
+                                <path d="M17 17h.01"/>
+                            </svg>
+                            <span>Customer Verification</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#status" class="nav-link" data-section="status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v4"/>
+                                <path d="m4.93 4.93 2.83 2.83"/>
+                                <path d="M2 12h4"/>
+                                <path d="m4.93 19.07 2.83-2.83"/>
+                                <path d="M12 22v-4"/>
+                                <path d="m19.07 19.07-2.83-2.83"/>
+                                <path d="M22 12h-4"/>
+                                <path d="m19.07 4.93-2.83 2.83"/>
+                            </svg>
+                            <span>Algorithm & Engine</span>
+                        </a>
+                    </li>
+                    <li id="nav-item-admin" class="nav-item" style="display: none;">
+                        <a href="#admin" class="nav-link" data-section="admin">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span>Admin Portal</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Sidebar Footer with Live WASM Telemetry Pill -->
+            <div class="sidebar-footer">
+                <div class="system-pill">
+                    <span class="system-pill-label">C / WASM Engine</span>
+                    <span class="system-pill-status">
+                        <span id="sidebar-pulse-dot" class="pulse-dot loading"></span>
+                        <span id="sidebar-status-text">Loading...</span>
+                    </span>
+                </div>
+                <a href="tests/test_wasm.html" class="test-link-btn" title="Open in-browser diagnostic test suite">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                    <span>Run Diagnostic Suite</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-content-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <div class="page-title-group">
+                        <h2 id="topbar-title">Platform Overview</h2>
+                        <p id="topbar-subtitle">Medicine batch traceability and digital record verification</p>
+                    </div>
+                </div>
+                <div class="topbar-right" style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div id="auth-status-container" class="auth-status-box">
+                        <button type="button" id="btn-open-login" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8125rem;">
+                            Sign In
+                        </button>
+                        <div id="auth-user-info" class="auth-user-info" style="display: none;">
+                            <span id="auth-user-badge" class="badge-role-admin">Admin</span>
+                            <span id="auth-user-email" style="font-size: 0.8125rem; font-weight: 600; color: var(--color-slate-700);"></span>
+                            <button type="button" id="btn-logout" class="btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Sign Out</button>
+                        </div>
+                    </div>
+                    <div id="topbar-engine-badge" class="badge-engine-status loading">
+                        <span id="topbar-pulse-dot" class="pulse-dot loading"></span>
+                        <span id="topbar-status-text">Initializing WASM...</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container -->
+            <main class="page-container">
+                <!-- =========================================================
+                     1. SECTION: OVERVIEW
+                     ========================================================= -->
+                <section id="section-overview" class="page-section active">
+                    <div class="hero-banner">
+                        <div class="hero-tag">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                            Academic DAA & Cryptography Project
+                        </div>
+                        <h3 class="hero-title">Verifiable Medicine Batch Traceability</h3>
+                        <p class="hero-lead">
+                            MedicineGuard is a medicine batch traceability and digital record verification system that uses SHA-256 hashing and Merkle Trees.
+                        </p>
+                    </div>
+
+                    <!-- Role Selection Cards -->
+                    <div class="workflow-section-title">Role-Based Experiences</div>
+                    <div class="role-grid">
+                        <div class="role-card" data-nav-target="manufacturer">
+                            <div>
+                                <div class="role-card-icon-box icon-box-mfg">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                                    </svg>
+                                </div>
+                                <h4 class="role-card-title">Manufacturer</h4>
+                                <p class="role-card-desc">
+                                    Register and manage medicine batches. Generates canonical MG01 records, builds balanced Merkle Trees, and produces individual unit QR references.
+                                </p>
+                            </div>
+                            <div class="role-card-cta">
+                                <span>Open Portal</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="role-card" data-nav-target="pharmacist">
+                            <div>
+                                <div class="role-card-icon-box icon-box-pharm">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+                                        <path d="m8.5 8.5 7 7"/>
+                                    </svg>
+                                </div>
+                                <h4 class="role-card-title">Pharmacist</h4>
+                                <p class="role-card-desc">
+                                    Inspect and verify medicine records. Evaluates MGP1 cryptographic proofs against manufacturer root commitments with complete path transparency.
+                                </p>
+                            </div>
+                            <div class="role-card-cta">
+                                <span>Open Verification</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+
+                        <div class="role-card" data-nav-target="customer">
+                            <div>
+                                <div class="role-card-icon-box icon-box-cust">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                        <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/>
+                                    </svg>
+                                </div>
+                                <h4 class="role-card-title">Customer</h4>
+                                <p class="role-card-desc">
+                                    Check a medicine's digital record against an authorized batch root. Demonstrates client-side Merkle proof verification for pharmaceutical packages.
+                                </p>
+                            </div>
+                            <div class="role-card-cta">
+                                <span>Verify Medicine</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4-Step Verification Workflow -->
+                    <div class="workflow-section-title">Cryptographic Traceability Lifecycle</div>
+                    <div class="workflow-grid">
+                        <div class="workflow-card">
+                            <span class="workflow-step-num">1</span>
+                            <h5 class="workflow-step-title">Batch Registration</h5>
+                            <p class="workflow-step-desc">
+                                Manufacturer compiles individual medicine units with unique identifiers into canonical MG01 binary structures.
+                            </p>
+                        </div>
+                        <div class="workflow-card">
+                            <span class="workflow-step-num">2</span>
+                            <h5 class="workflow-step-title">Root Commitment</h5>
+                            <p class="workflow-step-desc">
+                                The C/WASM engine constructs a Merkle Tree, generating a single 32-byte cryptographic root committing all units.
+                            </p>
+                        </div>
+                        <div class="workflow-card">
+                            <span class="workflow-step-num">3</span>
+                            <h5 class="workflow-step-title">Unit QR References</h5>
+                            <p class="workflow-step-desc">
+                                Each package receives an encoded QR reference with its unit serial, batch root, and compact MGP1 sibling path.
+                            </p>
+                        </div>
+                        <div class="workflow-card">
+                            <span class="workflow-step-num">4</span>
+                            <h5 class="workflow-step-title">Instant Verification</h5>
+                            <p class="workflow-step-desc">
+                                Pharmacist or customer inspects the proof in O(log N) time without requiring a centralized record database.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Core Architectural Guarantees Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                                <span>Algorithmic Invariants & Security Guarantees</span>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); margin-bottom: 1rem; line-height: 1.6;">
+                            MedicineGuard implements strict domain separation (RFC 6962) with a <code>0x00</code> prefix on leaf nodes and <code>0x01</code> on internal parents to mathematically rule out second-preimage collision attacks. Odd nodes are promoted deterministically without duplicating data, preventing Bitcoin-style tree duplication vulnerabilities.
+                        </p>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="badge-pill-tech">C11 Standard</span>
+                            <span class="badge-pill-tech">FIPS 180-4 SHA-256</span>
+                            <span class="badge-pill-tech">RFC 6962 Domain Separation</span>
+                            <span class="badge-pill-tech">Deterministic Odd-Node Promotion</span>
+                            <span class="badge-pill-tech">Constant-Time Comparison</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     2. SECTION: MANUFACTURER
+                     ========================================================= -->
+                <section id="section-manufacturer" class="page-section">
+                    <!-- Local Generation Limitation Notice -->
+                    <div class="alert-box alert-warning">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <div>
+                            <strong>Local Generation Notice:</strong> This batch is generated locally. It is not yet published to a trusted shared registry. Refreshing the application may remove it.
+                        </div>
+                    </div>
+
+                    <!-- Batch Registration Form Card -->
+                    <div id="mfg-form-card" class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>
+                                <span>Register Medicine Batch</span>
+                            </div>
+                            <span class="badge-pill-tech">C / WebAssembly Engine</span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); margin-bottom: 1.5rem; line-height: 1.6;">
+                            Enter batch production parameters. When submitted, the WebAssembly engine serializes all individual medicine units into canonical <code>MG01</code> binary structures, builds a balanced Merkle Tree with odd-node promotion, and computes the tamper-evident 32-byte Merkle Root.
+                        </p>
+
+                        <!-- Error Message Box -->
+                        <div id="mfg-form-error" class="alert-box alert-danger" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            <span id="mfg-form-error-text">Validation error</span>
+                        </div>
+
+                        <form id="mfg-batch-form" novalidate>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="mfg-batch-id" class="form-label">Batch ID *</label>
+                                    <input type="text" id="mfg-batch-id" class="form-input" placeholder="e.g. BATCH-2026-001" maxlength="64" required autocomplete="off">
+                                    <span class="form-hint">Unique identifier for this production run (1–64 characters).</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mfg-medicine-name" class="form-label">Medicine Name *</label>
+                                    <input type="text" id="mfg-medicine-name" class="form-input" placeholder="e.g. Amoxicillin 500mg" maxlength="128" required autocomplete="off">
+                                    <span class="form-hint">Commercial formulation and dosage (1–128 characters).</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mfg-mfg-date" class="form-label">Manufacturing Date *</label>
+                                    <input type="date" id="mfg-mfg-date" class="form-input" required>
+                                    <span class="form-hint">ISO 8601 format (YYYY-MM-DD).</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mfg-exp-date" class="form-label">Expiry Date *</label>
+                                    <input type="date" id="mfg-exp-date" class="form-input" required>
+                                    <span class="form-hint">Must be strictly after manufacturing date (YYYY-MM-DD).</span>
+                                </div>
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label for="mfg-unit-count" class="form-label">Total Number of Units *</label>
+                                    <input type="number" id="mfg-unit-count" class="form-input" min="1" max="100000" step="1" value="10" required>
+                                    <div class="preset-container">
+                                        <span class="preset-label">Quick Presets:</span>
+                                        <button type="button" class="preset-btn" data-preset="1">1 Unit</button>
+                                        <button type="button" class="preset-btn" data-preset="5">5 Units (Odd)</button>
+                                        <button type="button" class="preset-btn" data-preset="10">10 Units</button>
+                                        <button type="button" class="preset-btn" data-preset="100">100 Units</button>
+                                        <button type="button" class="preset-btn" data-preset="1000">1,000 Units</button>
+                                    </div>
+                                    <span class="form-hint">Positive integer between 1 and 100,000 units.</span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end;">
+                                <button type="submit" id="mfg-submit-btn" class="btn-primary">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+                                    </svg>
+                                    <span>Construct Merkle Tree & Generate Root</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Batch Results Interface (Visible after successful registration) -->
+                    <div id="mfg-results-card" class="card" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <span>Batch Cryptographic Commitment & Manifest</span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span class="badge-engine-status ready" style="padding: 0.25rem 0.65rem;">Active in Memory</span>
+                                <button type="button" id="mfg-btn-reset" class="btn-secondary" style="padding: 0.35rem 0.75rem;">
+                                    Register Another Batch
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Summary Parameters Grid -->
+                        <div class="status-grid" style="margin-bottom: 1.5rem;">
+                            <div class="metric-card">
+                                <div class="metric-card-label">Batch ID</div>
+                                <div id="res-batch-id" class="metric-card-val" style="font-size: 1.125rem;">--</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card-label">Medicine Formulation</div>
+                                <div id="res-medicine-name" class="metric-card-val" style="font-size: 1.125rem;">--</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card-label">Batch Size / Tree Height</div>
+                                <div id="res-batch-size" class="metric-card-val" style="font-size: 1.125rem;">--</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card-label">WASM Build Duration</div>
+                                <div id="res-build-time" class="metric-card-val" style="font-size: 1.125rem; color: var(--color-cyan-500);">-- ms</div>
+                            </div>
+                        </div>
+
+                        <!-- Actual Merkle Root Hex Display -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <div class="form-label" style="display: flex; align-items: center; justify-content: space-between;">
+                                <span>32-Byte Merkle Root Commitment (SHA-256)</span>
+                                <span style="font-size: 0.75rem; color: var(--color-slate-500);">Hexadecimal Encoded</span>
+                            </div>
+                            <div class="hex-display-box">
+                                <span id="mfg-root-hex" class="hex-value">--</span>
+                                <button type="button" id="mfg-copy-root-btn" class="copy-btn" title="Copy Merkle Root">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    <span id="copy-btn-text">Copy</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Phase 3D: Shared Trusted Registry Publication Panel -->
+                        <div class="card" style="background-color: var(--color-slate-50); border: 1px solid var(--color-slate-200); margin-bottom: 1.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <h4 style="font-size: 0.9375rem; font-weight: 700; color: var(--color-slate-900);">Shared Trusted Batch Registry</h4>
+                                        <span id="mfg-publish-status-badge" class="badge-pill-tech" style="background-color: var(--color-slate-200); color: var(--color-slate-700);">Local Session Only</span>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: var(--color-slate-500); margin-top: 0.25rem;">
+                                        Publish this batch to Cloudflare D1 so pharmacists can inspect and verify it across distributed devices.
+                                    </p>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                    <button type="button" id="btn-mfg-visualize-batch" class="btn-secondary" style="padding: 0.5rem 1rem;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem; vertical-align: text-bottom;">
+                                            <circle cx="12" cy="5" r="3"/>
+                                            <line x1="12" y1="8" x2="12" y2="12"/>
+                                            <line x1="12" y1="12" x2="6" y2="16"/>
+                                            <line x1="12" y1="12" x2="18" y2="16"/>
+                                            <circle cx="6" cy="19" r="3"/>
+                                            <circle cx="18" cy="19" r="3"/>
+                                        </svg>
+                                        Visualize Tree
+                                    </button>
+                                    <button type="button" id="btn-publish-batch" class="btn-primary" style="padding: 0.5rem 1rem;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem; vertical-align: text-bottom;">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        Publish to Shared Registry
+                                    </button>
+                                    <button type="button" id="btn-revoke-batch" class="btn-secondary" style="display: none; padding: 0.5rem 1rem; color: #dc2626; border-color: #fca5a5; background-color: #fff1f2;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem; vertical-align: text-bottom;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                        Revoke Batch
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Progress Bar (shown during upload) -->
+                            <div id="mfg-upload-progress-container" class="upload-progress-container" style="display: none;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: var(--color-slate-600);">
+                                    <span id="mfg-upload-progress-label">Uploading units & verifying proofs...</span>
+                                    <span id="mfg-upload-progress-pct">0%</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div id="mfg-upload-progress-fill" class="progress-bar-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medicine Units Table Header & Toolbar -->
+                        <div class="table-toolbar">
+                            <div>
+                                <h4 style="font-size: 1rem; font-weight: 700; color: var(--color-slate-900);">Medicine Units Manifest</h4>
+                                <p style="font-size: 0.75rem; color: var(--color-slate-500);">Individual units with leaf hashes and verifiable MGP1 proof paths</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="search-box">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    <input type="text" id="mfg-search-input" class="form-input" placeholder="Search Unit ID...">
+                                </div>
+                                <select id="mfg-page-size" class="form-input" style="width: auto; padding: 0.4rem 0.6rem;">
+                                    <option value="10">10 / page</option>
+                                    <option value="25">25 / page</option>
+                                    <option value="50">50 / page</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="unit-table-container">
+                            <table class="unit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Leaf Index</th>
+                                        <th>Unit Serial ID</th>
+                                        <th>Domain-Separated Leaf Hash</th>
+                                        <th>Proof Wire Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mfg-units-table-body">
+                                    <!-- Rows populated by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination Controls -->
+                        <div class="pagination-bar">
+                            <span id="mfg-pagination-info" style="font-size: 0.75rem; color: var(--color-slate-500);">
+                                Showing 1-10 of 10 units
+                            </span>
+                            <div class="page-controls">
+                                <button type="button" id="mfg-prev-page" class="page-btn">Previous</button>
+                                <span id="mfg-page-num" style="font-size: 0.75rem; font-weight: 700; padding: 0 0.5rem;">Page 1</span>
+                                <button type="button" id="mfg-next-page" class="page-btn">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     3. SECTION: PHARMACIST
+                     ========================================================= -->
+                <section id="section-pharmacist" class="page-section">
+                    <!-- Pharmacist Top Header Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                                <span>Pharmacist Medicine Verification Portal</span>
+                            </div>
+                            <span class="badge-pill-tech" style="background-color: var(--color-cyan-100); color: var(--color-cyan-500); border-color: var(--color-cyan-300);">Native C/WASM Engine</span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); line-height: 1.6;">
+                            Licensed pharmacists use this portal to inspect individual medicine packages (blister packs, vials, cartons) and verify their digital record membership against trusted Merkle Roots using native C11/WebAssembly cryptographic proofs.
+                        </p>
+
+                        <!-- Mandatory In-Session Notice Banner -->
+                        <div class="session-notice-banner">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="notice-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <div class="notice-text">
+                                <strong>Session Notice:</strong> Verification currently uses batches generated in this browser session. Shared verification across devices will be available after trusted backend integration. Refreshing the browser may remove locally generated batches.
+                            </div>
+                        </div>
+
+                        <!-- Source Selection Toggle (Shared Registry vs In-Memory Session) -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;">
+                            <div class="source-toggle-group">
+                                <button type="button" id="pharm-source-shared" class="source-toggle-btn active">
+                                    🌐 Shared Trusted Registry (D1)
+                                </button>
+                                <button type="button" id="pharm-source-local" class="source-toggle-btn">
+                                    💻 Local Browser Session
+                                </button>
+                            </div>
+                            <span id="pharm-source-info" style="font-size: 0.75rem; color: var(--color-slate-500);">
+                                Mode: Cross-device verification via Cloudflare D1
+                            </span>
+                        </div>
+
+                        <!-- Active Session Batches Overview -->
+                        <div id="pharm-session-batches-container" class="session-batches-bar" style="margin-top: 1rem;">
+                            <!-- Populated dynamically: either active batch chips or no-batches warning -->
+                        </div>
+                    </div>
+
+                    <!-- Medicine Lookup & Verification Form Card -->
+                    <div class="card" id="pharm-lookup-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <span>Lookup & Cryptographic Verification</span>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--color-slate-500);">MG01 Canonical Query</span>
+                        </div>
+
+                        <form id="pharm-lookup-form" autocomplete="off">
+                            <div class="form-grid">
+                                <!-- Medicine Unit ID (Required) -->
+                                <div class="form-group">
+                                    <label for="pharm-unit-id" class="form-label">
+                                        Medicine Unit ID <span style="color: var(--color-danger);">*</span>
+                                    </label>
+                                    <input type="text" id="pharm-unit-id" class="form-input" placeholder="e.g. UNIT-000001" required>
+                                    <span class="form-hint">Unique serial ID stamped on unit blister pack or vial.</span>
+                                </div>
+
+                                <!-- Batch ID (Optional Filter) -->
+                                <div class="form-group">
+                                    <label for="pharm-batch-id" class="form-label">
+                                        Batch ID <span style="font-weight: 400; color: var(--color-slate-500);">(Optional Filter)</span>
+                                    </label>
+                                    <input type="text" id="pharm-batch-id" class="form-input" placeholder="e.g. BATCH-2026-0001 (or blank to search all)">
+                                    <span class="form-hint">Leave blank to search across all registered session batches.</span>
+                                </div>
+                            </div>
+
+                            <!-- Sample Quick-Fill Chips if batch exists -->
+                            <div id="pharm-quick-samples" class="preset-container" style="display: none; margin-bottom: 1.25rem;">
+                                <span class="preset-label">Quick Test Units:</span>
+                                <div id="pharm-quick-buttons" style="display: inline-flex; gap: 0.35rem; flex-wrap: wrap;"></div>
+                            </div>
+
+                            <!-- Form Error Banner -->
+                            <div id="pharm-form-error" class="verif-result-card failed" style="display: none; margin-bottom: 1.25rem; padding: 0.75rem 1rem;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <span id="pharm-form-error-text" style="font-size: 0.8125rem; font-weight: 500;"></span>
+                            </div>
+
+                            <!-- Actions Row -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                                <button type="button" id="pharm-btn-clear" class="btn-secondary">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                    <span>Clear</span>
+                                </button>
+                                <button type="submit" id="pharm-verify-btn" class="btn-primary">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                    <span>Verify Medicine Record</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Verification Result Display Card -->
+                    <div id="pharm-result-card" class="card" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                <span>Verification Outcome</span>
+                            </div>
+                            <span id="pharm-result-badge" class="badge-pill-tech">Ready</span>
+                        </div>
+
+                        <!-- Visual State Banner (5 distinct visual states) -->
+                        <div id="pharm-state-banner" class="verif-state-card">
+                            <div id="pharm-state-icon" class="verif-state-icon"></div>
+                            <div style="flex: 1;">
+                                <h4 id="pharm-state-headline" class="verif-state-headline"></h4>
+                                <p id="pharm-state-desc" class="verif-state-desc"></p>
+                            </div>
+                        </div>
+
+                        <!-- Telemetry Metadata Strip -->
+                        <div class="pharm-telemetry-bar">
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Timestamp:</span>
+                                <span id="pharm-telemetry-time" class="telemetry-value">--</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">C Engine Status:</span>
+                                <span id="pharm-telemetry-status" class="telemetry-value">--</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">Engine Return Code:</span>
+                                <span id="pharm-telemetry-code" class="telemetry-value font-mono">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Retrieved Medicine Information Grid (Section 4B) -->
+                        <div id="pharm-record-section" style="margin-top: 1.5rem; display: none;">
+                            <h4 style="font-size: 0.875rem; font-weight: 700; color: var(--color-slate-900); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                                Retrieved Canonical Record Details (MG01)
+                            </h4>
+
+                            <div class="status-grid" style="margin-bottom: 1.25rem;">
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Medicine Formulation</div>
+                                    <div id="pharm-disp-name" class="metric-card-val" style="font-size: 1.05rem;">--</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Batch ID</div>
+                                    <div id="pharm-disp-batch" class="metric-card-val font-mono" style="font-size: 1.05rem;">--</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Unit Serial ID</div>
+                                    <div id="pharm-disp-unit" class="metric-card-val font-mono" style="font-size: 1.05rem;">--</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Manufacturing Date</div>
+                                    <div id="pharm-disp-mfg" class="metric-card-val font-mono" style="font-size: 1.05rem;">--</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Expiry Date</div>
+                                    <div id="pharm-disp-exp" class="metric-card-val font-mono" style="font-size: 1.05rem;">--</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-card-label">Leaf Index / Total Units</div>
+                                    <div id="pharm-disp-index" class="metric-card-val font-mono" style="font-size: 1.05rem;">--</div>
+                                </div>
+                            </div>
+
+                            <!-- Merkle Root Commitment -->
+                            <div style="margin-bottom: 1.25rem;">
+                                <div class="form-label" style="display: flex; justify-content: space-between;">
+                                    <span>Batch Merkle Root Commitment (SHA-256)</span>
+                                    <span style="font-size: 0.75rem; color: var(--color-slate-500);">32-Byte Root</span>
+                                </div>
+                                <div class="hex-display-box">
+                                    <span id="pharm-disp-root" class="hex-value">--</span>
+                                    <button type="button" id="pharm-btn-copy-root" class="copy-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        <span id="pharm-copy-text">Copy</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Proof Inspection Toggle & Negative Security Actions -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px solid var(--color-slate-200);">
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <button type="button" id="pharm-btn-toggle-proof" class="btn-secondary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <span id="pharm-toggle-proof-text">Inspect Cryptographic Proof (MGP1)</span>
+                                    </button>
+                                    <button type="button" id="pharm-btn-visualize-unit" class="btn-secondary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="5" r="3"/>
+                                            <line x1="12" y1="8" x2="12" y2="12"/>
+                                            <line x1="12" y1="12" x2="6" y2="16"/>
+                                            <line x1="12" y1="12" x2="18" y2="16"/>
+                                            <circle cx="6" cy="19" r="3"/>
+                                            <circle cx="18" cy="19" r="3"/>
+                                        </svg>
+                                        <span>Visualize in Tree</span>
+                                    </button>
+                                </div>
+                                <button type="button" id="pharm-btn-tamper-toggle" class="btn-secondary" style="color: var(--color-danger); border-color: var(--color-danger-border);">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    <span id="pharm-tamper-text">Simulate Counterfeit Alteration</span>
+                                </button>
+                            </div>
+
+                            <!-- Expandable Technical Proof Section (Section 6) -->
+                            <div id="pharm-proof-container" class="proof-drawer" style="display: none; margin-top: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                    <h4 style="font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate-600); letter-spacing: 0.05em;">
+                                        MGP1 Binary Proof Structure & Merkle Path
+                                    </h4>
+                                    <span id="pharm-proof-meta-pill" class="badge-pill-tech" style="font-family: var(--font-mono);">
+                                        --
+                                    </span>
+                                </div>
+
+                                <div class="proof-meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                                    <div class="proof-meta-box">
+                                        <div class="proof-meta-label">Wire Magic</div>
+                                        <div class="proof-meta-val font-mono" style="color: var(--color-cyan-500);">MGP1</div>
+                                    </div>
+                                    <div class="proof-meta-box">
+                                        <div class="proof-meta-label">Leaf Index</div>
+                                        <div id="pharm-proof-meta-index" class="proof-meta-val font-mono">--</div>
+                                    </div>
+                                    <div class="proof-meta-box">
+                                        <div class="proof-meta-label">Total Leaves</div>
+                                        <div id="pharm-proof-meta-leaves" class="proof-meta-val font-mono">--</div>
+                                    </div>
+                                    <div class="proof-meta-box">
+                                        <div class="proof-meta-label">Proof Steps</div>
+                                        <div id="pharm-proof-meta-steps" class="proof-meta-val font-mono">--</div>
+                                    </div>
+                                    <div class="proof-meta-box">
+                                        <div class="proof-meta-label">Payload Size</div>
+                                        <div id="pharm-proof-meta-size" class="proof-meta-val font-mono">--</div>
+                                    </div>
+                                </div>
+
+                                <!-- Step-by-Step Traversal Steps Cards -->
+                                <div id="pharm-proof-steps-list">
+                                    <!-- Populated dynamically with step traversal cards -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verification History Card (Section 7) -->
+                    <div class="card" id="pharm-history-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                                <span>Browser Session Verification History</span>
+                            </div>
+                            <button type="button" id="pharm-btn-clear-history" class="btn-secondary" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;">
+                                Clear History
+                            </button>
+                        </div>
+
+                        <p style="font-size: 0.75rem; color: var(--color-slate-500); margin-bottom: 1rem;">
+                            History is retained strictly in browser-session memory and cleared upon page reload. Entries are recorded only when an actual cryptographic verification executes through the native C WebAssembly engine.
+                        </p>
+
+                        <div class="unit-table-container">
+                            <table class="unit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Unit Serial ID</th>
+                                        <th>Batch ID</th>
+                                        <th>Verification Result</th>
+                                        <th>C Engine Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pharm-history-table-body">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-slate-400);">
+                                            No medicine verification attempts recorded in this browser session yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Server Audit Log Card (Phase 3D Cloudflare D1 Integration) -->
+                    <div class="card" id="pharm-server-audit-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                                <span>Shared Registry Verification Audit Trail (Cloudflare D1)</span>
+                            </div>
+                            <button type="button" id="pharm-btn-refresh-audit" class="btn-secondary" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;">
+                                Refresh Server Logs
+                            </button>
+                        </div>
+
+                        <p style="font-size: 0.75rem; color: var(--color-slate-500); margin-bottom: 1rem;">
+                            Immutable cryptographic verification logs recorded in the distributed backend database for tamper-evident compliance.
+                        </p>
+
+                        <div class="unit-table-container">
+                            <table class="unit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Unit Serial ID</th>
+                                        <th>Batch ID</th>
+                                        <th>Pharmacist</th>
+                                        <th>Client Result</th>
+                                        <th>Server Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pharm-audit-table-body">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-slate-400);">
+                                            No server audit logs recorded yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     4. SECTION: CUSTOMER VERIFICATION
+                     ========================================================= -->
+                <section id="section-customer" class="page-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
+                                <span>Customer Medicine Verification</span>
+                            </div>
+                            <span class="badge-pill-tech" style="background-color: var(--color-cyan-100); color: var(--color-cyan-800);">Public & Mobile-First</span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); line-height: 1.6;">
+                            Verify individual medicine packages directly against registered Merkle Tree cryptographic commitments on the shared trusted registry. No account or login required.
+                        </p>
+                    </div>
+
+                    <!-- Scanner Controls & Viewport -->
+                    <div class="card qr-scanner-card" style="margin-top: 1rem;">
+                        <div style="max-width: 480px; margin: 0 auto;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #fff;">Camera QR Scanner</h3>
+                            </div>
+                            <p style="font-size: 0.8125rem; color: var(--color-slate-300); margin-bottom: 1.25rem;">
+                                Scan the serialized verification QR code printed on your medicine carton or blister pack.
+                            </p>
+
+                            <!-- Scanner Start Button (When inactive) -->
+                            <div id="scanner-controls-initial">
+                                <button type="button" id="btn-start-scanner" class="btn-primary" style="margin: 0 auto; padding: 0.75rem 1.75rem; font-size: 0.9375rem; background-color: var(--color-cyan-500); border-color: var(--color-cyan-400);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                    Scan QR Code with Camera
+                                </button>
+                                <p style="font-size: 0.75rem; color: var(--color-slate-400); margin-top: 0.5rem;">
+                                    Uses device rear-facing camera. Zero remote video upload.
+                                </p>
+                            </div>
+
+                            <!-- Active Camera Viewport (Hidden until user clicks scan) -->
+                            <div id="scanner-viewport-container" style="display: none;">
+                                <div class="scanner-viewport-box">
+                                    <video id="scanner-video" class="scanner-video-el" playsinline muted></video>
+                                    <canvas id="scanner-canvas" style="display: none;"></canvas>
+                                    <div class="scanner-viewfinder-overlay">
+                                        <div class="scanner-laser"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem; justify-content: center; align-items: center; margin-top: 1rem;">
+                                    <span style="font-size: 0.75rem; color: var(--color-cyan-300); font-weight: 600;">Align QR code inside box</span>
+                                    <button type="button" id="btn-stop-scanner" class="btn-secondary" style="background-color: var(--color-slate-800); color: var(--color-slate-200); border-color: var(--color-slate-600); padding: 0.4rem 0.85rem; font-size: 0.8125rem;">
+                                        Stop Scanner
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Camera Error / Permission Notice (Hidden unless error occurs) -->
+                            <div id="scanner-error-box" class="alert-box alert-danger" style="display: none; margin-top: 1rem; text-align: left;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                <div>
+                                    <strong id="scanner-error-title">Camera Access Notice:</strong>
+                                    <div id="scanner-error-message" style="font-size: 0.8125rem; margin-top: 0.25rem;">Camera permission was denied or no camera device was detected. Please use the manual verification code entry below.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Verification Fallback Card -->
+                    <div class="card" style="margin-top: 1rem;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg>
+                                <span>Manual Reference Code Entry</span>
+                            </div>
+                            <span class="badge-pill-tech">Fallback Option</span>
+                        </div>
+                        <p style="font-size: 0.8125rem; color: var(--color-slate-500); margin-bottom: 1rem;">
+                            If you do not have a camera or the QR code is damaged, enter the 32-character hexadecimal verification code printed under the QR code:
+                        </p>
+                        <form id="customer-verify-form" novalidate>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 260px;">
+                                    <input type="text" id="customer-ref-input" class="form-input" placeholder="e.g. 5d92a1b3c4e5f60718293a4b5c6d7e8f" maxlength="32" autocomplete="off" spellcheck="false" style="font-family: var(--font-mono); font-size: 0.9375rem; letter-spacing: 0.05em;" required>
+                                </div>
+                                <button type="submit" id="customer-btn-verify" class="btn-primary" style="padding: 0.6rem 1.25rem;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    Verify Medicine Record
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Verification In-Progress Loading Indicator -->
+                    <div id="customer-verif-loading" class="card" style="display: none; text-align: center; padding: 2.5rem 1rem; margin-top: 1rem;">
+                        <div class="spinner" style="margin: 0 auto 1rem auto; width: 36px; height: 36px; border-width: 3px;"></div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--color-slate-800);">Verifying Digital Record...</h4>
+                        <p style="font-size: 0.8125rem; color: var(--color-slate-500); margin-top: 0.25rem;">
+                            Querying shared registry and executing server-side Merkle proof validation...
+                        </p>
+                    </div>
+
+                    <!-- Customer Result: VERIFIED -->
+                    <div id="customer-result-verified" class="cust-result-card verified" style="display: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--color-success-bg); color: var(--color-success); display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-success-border);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--color-slate-900);">Digital Medicine Record Verified</h3>
+                                    <span style="font-size: 0.75rem; color: var(--color-success); font-weight: 600;">Cryptographic Merkle Proof Validated</span>
+                                </div>
+                            </div>
+                            <span class="badge-engine-status ready" style="padding: 0.3rem 0.75rem; font-size: 0.75rem;">VERIFIED RECORD</span>
+                        </div>
+
+                        <div class="alert-box alert-success" style="margin-bottom: 1.25rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            <div>
+                                <strong>Record Authenticated:</strong> Digital medicine record verified against the registered batch commitment.
+                            </div>
+                        </div>
+
+                        <!-- Record Details Grid -->
+                        <div class="cust-data-grid">
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Medicine Formulation</div>
+                                <div id="cust-res-medicine" class="cust-data-value">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Production Batch ID</div>
+                                <div id="cust-res-batch" class="cust-data-value font-mono">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Serialized Unit ID</div>
+                                <div id="cust-res-unit" class="cust-data-value font-mono">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Manufacturing Date</div>
+                                <div id="cust-res-mfg" class="cust-data-value">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Expiry Date</div>
+                                <div id="cust-res-exp" class="cust-data-value">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Merkle Leaf Index</div>
+                                <div id="cust-res-leaf" class="cust-data-value font-mono">--</div>
+                            </div>
+                            <div class="cust-data-item" style="grid-column: 1 / -1;">
+                                <div class="cust-data-label">Registry Verification Timestamp</div>
+                                <div id="cust-res-timestamp" class="cust-data-value font-mono" style="font-size: 0.8125rem;">--</div>
+                            </div>
+                        </div>
+
+                        <!-- Mandatory Exact Trust Disclaimer -->
+                        <div class="trust-disclaimer-card">
+                            <div class="trust-disclaimer-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span>Important Trust & Safety Disclaimer</span>
+                            </div>
+                            <p class="trust-disclaimer-text">
+                                MedicineGuard verifies the digital medicine record against a registered Merkle Tree commitment. This does not independently establish the physical medicine's chemical composition, safety, storage conditions, manufacturer legitimacy or guarantee that the QR code has not been copied.
+                            </p>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
+                            <button type="button" id="cust-btn-verify-another" class="btn-secondary">
+                                Verify Another Medicine
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Customer Result: ERROR / REVOKED / NOT FOUND -->
+                    <div id="customer-result-error" class="cust-result-card error" style="display: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                <div id="cust-err-icon-box" style="width: 36px; height: 36px; border-radius: 50%; background-color: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-danger-border);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </div>
+                                <div>
+                                    <h3 id="cust-err-title" style="font-size: 1.125rem; font-weight: 700; color: var(--color-slate-900);">Verification Failed</h3>
+                                    <span id="cust-err-status-pill" style="font-size: 0.75rem; color: var(--color-danger); font-weight: 600;">UNAUTHENTICATED RECORD</span>
+                                </div>
+                            </div>
+                            <span id="cust-err-badge" class="badge-engine-status error" style="padding: 0.3rem 0.75rem; font-size: 0.75rem;">UNVERIFIED</span>
+                        </div>
+
+                        <div id="cust-err-alert" class="alert-box alert-danger" style="margin-bottom: 1.25rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            <div id="cust-err-message">
+                                Verification failed.
+                            </div>
+                        </div>
+
+                        <!-- Revocation Context Details (Visible only when status === REVOKED) -->
+                        <div id="cust-revoked-details" class="cust-data-grid" style="display: none;">
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Revocation Reason</div>
+                                <div id="cust-revoked-reason" class="cust-data-value" style="color: var(--color-danger);">--</div>
+                            </div>
+                            <div class="cust-data-item">
+                                <div class="cust-data-label">Revocation Timestamp</div>
+                                <div id="cust-revoked-date" class="cust-data-value font-mono">--</div>
+                            </div>
+                        </div>
+
+                        <!-- Mandatory Exact Trust Disclaimer -->
+                        <div class="trust-disclaimer-card">
+                            <div class="trust-disclaimer-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span>Important Trust & Safety Disclaimer</span>
+                            </div>
+                            <p class="trust-disclaimer-text">
+                                MedicineGuard verifies the digital medicine record against a registered Merkle Tree commitment. This does not independently establish the physical medicine's chemical composition, safety, storage conditions, manufacturer legitimacy or guarantee that the QR code has not been copied.
+                            </p>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 1.25rem;">
+                            <button type="button" id="cust-btn-try-again" class="btn-secondary">
+                                Try Another Reference
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     5. SECTION: ALGORITHM & SYSTEM STATUS
+                     ========================================================= -->
+                <section id="section-status" class="page-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M4.93 4.93l2.83 2.83M2 12h4M4.93 19.07l2.83-2.83M12 22v-4M19.07 19.07l-2.83-2.83M22 12h-4M19.07 4.93l-2.83 2.83"/></svg>
+                                <span>Core Cryptographic Engine & Runtime Health</span>
+                            </div>
+                            <span id="runtime-status-pill" class="badge-pill-tech">Evaluating Engine...</span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); line-height: 1.6;">
+                            MedicineGuard executes its core algorithms using standard C11 compiled to WebAssembly (wasm32) via the Emscripten toolchain, ensuring native cryptographic performance and bit-for-bit mathematical parity between client browsers and backend systems.
+                        </p>
+                    </div>
+
+                    <!-- Engine Metrics Grid -->
+                    <div class="status-grid">
+                        <div class="metric-card">
+                            <div class="metric-card-label">WASM Engine Status</div>
+                            <div id="metric-engine-status" class="metric-card-val" style="color: var(--color-warning);">Loading...</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card-label">Initial Linear Memory</div>
+                            <div id="metric-memory" class="metric-card-val">16 MB</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card-label">Generational Handle Slots</div>
+                            <div id="metric-contexts" class="metric-card-val">32 Slots</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card-label">Engine Load Time</div>
+                            <div id="metric-load-time" class="metric-card-val">-- ms</div>
+                        </div>
+                    </div>
+
+                    <!-- Live Cryptographic Self-Test -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <span>Live WebAssembly Cryptographic Self-Check</span>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); margin-bottom: 0.75rem;">
+                            The diagnostic below executes a live FIPS 180-4 SHA-256 computation directly inside the loaded WebAssembly engine to verify linear memory safety and exported C function invocation:
+                        </p>
+                        <div class="diagnostic-box">
+                            <div class="diagnostic-line">
+                                <span class="diagnostic-tag">Input String:</span>
+                                <span>"MedicineGuard"</span>
+                            </div>
+                            <div class="diagnostic-line">
+                                <span class="diagnostic-tag">Computed Hash:</span>
+                                <span id="diag-sha256" style="color: var(--color-cyan-300);">Executing live SHA-256...</span>
+                            </div>
+                            <div class="diagnostic-line">
+                                <span class="diagnostic-tag">Module Target:</span>
+                                <span>wasm32-unknown-emscripten (Clang 24.0.0git, -O3)</span>
+                            </div>
+                            <div class="diagnostic-line">
+                                <span class="diagnostic-tag">Memory Growth:</span>
+                                <span>Enabled (16 MB initial, 256 MB max ceiling)</span>
+                            </div>
+                            <div class="diagnostic-line">
+                                <span class="diagnostic-tag">Heap Tracking:</span>
+                                <span>Dynamic HEAPU8 (Detached ArrayBuffer Immune)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Merkle Tree Visualizer (Phase 5) -->
+                    <div id="visualizer-card" class="card" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="5" r="3"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="12" x2="6" y2="16"/>
+                                    <line x1="12" y1="12" x2="18" y2="16"/>
+                                    <circle cx="6" cy="19" r="3"/>
+                                    <circle cx="18" cy="19" r="3"/>
+                                </svg>
+                                <span>Interactive Merkle Tree Visualizer</span>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span class="badge-pill-tech" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                    C11/WASM Invariant Parity
+                                </span>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); line-height: 1.6; margin-bottom: 1rem;">
+                            Inspect the cryptographic structure of medicine batches. Click any leaf node (unit) to trace its O(log N) verification path up to the Merkle Root, highlighting sibling nodes, odd-node promotion paths, and domain separation prefixes.
+                        </p>
+
+                        <!-- Visualizer Toolbar -->
+                        <div class="visualizer-toolbar">
+                            <div class="visualizer-controls-group">
+                                <label for="visualizer-batch-select" style="font-size: 0.75rem; font-weight: 600; color: var(--color-slate-400);">Batch:</label>
+                                <select id="visualizer-batch-select" class="visualizer-select" aria-label="Select batch to visualize">
+                                    <option value="">No batches loaded</option>
+                                </select>
+
+                                <label for="visualizer-unit-select" style="font-size: 0.75rem; font-weight: 600; color: var(--color-slate-400); margin-left: 0.5rem;">Unit:</label>
+                                <select id="visualizer-unit-select" class="visualizer-select" aria-label="Select medicine unit to trace">
+                                    <option value="0">Unit #1</option>
+                                </select>
+
+                                <input type="text" id="visualizer-unit-search" class="visualizer-input" placeholder="Search Unit ID..." style="width: 140px;" aria-label="Search Unit ID">
+                            </div>
+
+                            <div class="visualizer-controls-group">
+                                <span style="font-size: 0.75rem; color: var(--color-slate-400); margin-right: 0.25rem;">View:</span>
+                                <button type="button" id="vis-btn-mode-auto" class="visualizer-btn active" title="Auto select view based on batch size">Auto</button>
+                                <button type="button" id="vis-btn-mode-full" class="visualizer-btn" title="Render all nodes in the tree">Full Tree</button>
+                                <button type="button" id="vis-btn-mode-focused" class="visualizer-btn" title="Render active proof path only (recommended for large N)">Focused Path</button>
+                                <button type="button" id="vis-btn-reset" class="visualizer-btn" title="Reset pan and zoom position">Reset View</button>
+                                <button type="button" id="vis-btn-fit" class="visualizer-btn" title="Fit tree to width">Fit Width</button>
+                            </div>
+                        </div>
+
+                        <!-- Stage: SVG Canvas + Details Inspector -->
+                        <div class="visualizer-stage-grid" style="margin-top: 1rem;">
+                            <!-- SVG Viewport Card -->
+                            <div class="visualizer-viewport-card">
+                                <div class="visualizer-viewport-header">
+                                    <span>Drag to pan · Scroll to zoom · Click leaf to highlight proof path</span>
+                                    <span id="visualizer-tree-stats">Batch: -- · Leaves: -- · Height: --</span>
+                                </div>
+                                <svg id="visualizer-svg" class="visualizer-svg-canvas">
+                                    <defs>
+                                        <filter id="vis-glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="3" result="blur"/>
+                                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                                        </filter>
+                                        <filter id="vis-glow-amber" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="3" result="blur"/>
+                                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                                        </filter>
+                                    </defs>
+                                    <g id="visualizer-canvas-group" transform="translate(30, 30) scale(1)"></g>
+                                </svg>
+
+                                <!-- Floating Zoom Controls -->
+                                <div class="visualizer-floating-zoom">
+                                    <button type="button" id="vis-zoom-in" title="Zoom In">+</button>
+                                    <button type="button" id="vis-zoom-out" title="Zoom Out">−</button>
+                                    <button type="button" id="vis-zoom-reset" title="Reset View" style="font-size: 0.6875rem;">1:1</button>
+                                </div>
+                            </div>
+
+                            <!-- Details Inspector Panel -->
+                            <div id="visualizer-details-panel" class="visualizer-inspector-card">
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 250px; text-align: center; color: var(--color-slate-400);">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.75rem; opacity: 0.5;">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-slate-300);">Select a batch to inspect its cryptographic tree</p>
+                                    <p style="font-size: 0.75rem; margin-top: 0.25rem;">Registers and unit proof paths will appear here with bit-for-bit math breakdown.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Specifications Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                <span>DAA Implementation & Security Invariants</span>
+                            </div>
+                        </div>
+                        <table class="tech-spec-table">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Implementation Standard</th>
+                                    <th>Algorithmic Property</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Hash Function</td>
+                                    <td class="code-cell">FIPS 180-4 SHA-256</td>
+                                    <td>256-bit collision resistance, 64-round compression loop</td>
+                                </tr>
+                                <tr>
+                                    <td>Domain Separation</td>
+                                    <td class="code-cell">RFC 6962 Standard</td>
+                                    <td>Prefix 0x00 for leaves, 0x01 for parents; prevents second-preimage attack</td>
+                                </tr>
+                                <tr>
+                                    <td>Record Wire Format</td>
+                                    <td class="code-cell">MG01 Binary Protocol</td>
+                                    <td>Deterministic serialization with 32-bit big-endian field lengths</td>
+                                </tr>
+                                <tr>
+                                    <td>Tree Structure</td>
+                                    <td class="code-cell">Binary Merkle Tree</td>
+                                    <td>Balanced tree with deterministic odd-node promotion</td>
+                                </tr>
+                                <tr>
+                                    <td>Proof Wire Format</td>
+                                    <td class="code-cell">MGP1 Binary Protocol</td>
+                                    <td>14-byte header + 33-byte step records (32B hash + 1B direction)</td>
+                                </tr>
+                                <tr>
+                                    <td>Proof Verification</td>
+                                    <td class="code-cell">Constant-time crypto_memcmp</td>
+                                    <td>O(log N) path traversal; immune to timing side-channel attacks</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- =========================================================
+                     5. SECTION: ADMIN PORTAL (Phase 3D Access Control)
+                     ========================================================= -->
+                <section id="section-admin" class="page-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <span>Administration & Identity Management</span>
+                            </div>
+                            <span class="badge-role-admin">Administrator Access</span>
+                        </div>
+                        <p style="font-size: 0.875rem; color: var(--color-slate-600); line-height: 1.6;">
+                            Manage authorized system users, provisioning Manufacturer and Pharmacist accounts, toggling account statuses, and performing administrative password resets.
+                        </p>
+                    </div>
+
+                    <!-- Create New User Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                <span>Provision Authorized User</span>
+                            </div>
+                        </div>
+                        <form id="admin-create-user-form" novalidate style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+                            <div>
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="admin-new-email" class="form-input" required placeholder="user@pharmacy.local">
+                            </div>
+                            <div>
+                                <label class="form-label">Temporary Password (min 8 chars)</label>
+                                <input type="password" id="admin-new-password" class="form-input" required placeholder="••••••••••••">
+                            </div>
+                            <div>
+                                <label class="form-label">System Role</label>
+                                <select id="admin-new-role" class="form-input">
+                                    <option value="pharmacist">Pharmacist</option>
+                                    <option value="manufacturer">Manufacturer</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button type="submit" id="admin-btn-create-user" class="btn-primary" style="width: 100%;">
+                                    Create User Account
+                                </button>
+                            </div>
+                        </form>
+                        <div id="admin-create-feedback" style="margin-top: 0.75rem; font-size: 0.8125rem; display: none;"></div>
+                    </div>
+
+                    <!-- System Users Table Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <path d="M3 9h18"/>
+                                    <path d="M9 21V9"/>
+                                </svg>
+                                <span>Registered System Users</span>
+                            </div>
+                            <button type="button" id="admin-btn-refresh-users" class="btn-secondary" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;">
+                                Refresh List
+                            </button>
+                        </div>
+                        <div class="unit-table-container">
+                            <table class="unit-table">
+                                <thead>
+                                    <tr>
+                                        <th>User Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Created At</th>
+                                        <th style="text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-table-body">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--color-slate-400);">
+                                            Loading users...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         Proof Inspection & Cryptographic Verification Modal
+         ========================================================= -->
+    <div id="proof-modal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modal-unit-title">Unit Proof Inspection</h3>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Binary MGP1 sibling path traversal and live root verification</p>
+                </div>
+                <button type="button" id="modal-close-x" class="modal-close-btn" aria-label="Close Modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Live Verification Result Banner -->
+                <div id="modal-verif-card" class="verif-result-card success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    <div>
+                        <div id="modal-verif-headline" style="font-weight: 700; font-size: 0.9375rem;">Verified against Batch Root</div>
+                        <div id="modal-verif-desc" style="font-size: 0.75rem; opacity: 0.9;">
+                            The real C/WASM verification function <code>_mg_wasm_verify_record</code> confirmed that this medicine record reconstructs the trusted batch Merkle Root.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit & Leaf Hash Details -->
+                <div style="margin-bottom: 1.25rem;">
+                    <h4 style="font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate-500); margin-bottom: 0.5rem; letter-spacing: 0.05em;">Medicine Record & Leaf Commitment</h4>
+                    <div style="background-color: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-md); padding: 0.75rem 1rem; font-size: 0.8125rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <div><strong style="color: var(--color-slate-600);">Unit ID:</strong> <span id="modal-unit-id" style="font-family: var(--font-mono); font-weight: 600;">--</span></div>
+                            <div><strong style="color: var(--color-slate-600);">Leaf Index:</strong> <span id="modal-leaf-index" style="font-family: var(--font-mono); font-weight: 600;">--</span></div>
+                            <div><strong style="color: var(--color-slate-600);">Batch ID:</strong> <span id="modal-batch-id">--</span></div>
+                            <div><strong style="color: var(--color-slate-600);">Medicine:</strong> <span id="modal-medicine-name">--</span></div>
+                            <div><strong style="color: var(--color-slate-600);">Mfg Date:</strong> <span id="modal-mfg-date">--</span></div>
+                            <div><strong style="color: var(--color-slate-600);">Expiry Date:</strong> <span id="modal-exp-date">--</span></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate-500); margin-bottom: 0.25rem;">
+                                Domain-Separated Leaf Hash [SHA-256(0x00 || MG01)]:
+                            </div>
+                            <div id="modal-leaf-hash" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-cyan-500); word-break: break-all; background-color: var(--color-white); border: 1px solid var(--color-slate-200); padding: 0.35rem 0.5rem; border-radius: var(--radius-sm);">
+                                --
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proof Wire Statistics -->
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <h4 style="font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate-500); letter-spacing: 0.05em;">
+                            Binary MGP1 Sibling Traversal Path
+                        </h4>
+                        <span id="modal-proof-wire-size" class="badge-pill-tech" style="font-family: var(--font-mono);">
+                            -- bytes
+                        </span>
+                    </div>
+                    <div id="modal-proof-steps-container">
+                        <!-- Populated with proof step cards by app.js -->
+                    </div>
+                </div>
+
+                <!-- Interactive Negative Security / Tamper Demonstration -->
+                <div style="background-color: var(--color-slate-50); border: 1px dashed var(--color-slate-300); border-radius: var(--radius-md); padding: 0.75rem 1rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                        <div>
+                            <div style="font-size: 0.8125rem; font-weight: 700; color: var(--color-slate-900);">Cryptographic Tamper Defense Check</div>
+                            <div style="font-size: 0.75rem; color: var(--color-slate-500);">Test negative security: alter medicine formulation and verify root mismatch rejection</div>
+                        </div>
+                        <button type="button" id="modal-btn-tamper-toggle" class="btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                            Simulate Altered Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span style="font-size: 0.75rem; color: var(--color-slate-500);">
+                    MedicineGuard Merkle Tree Verification Engine
+                </span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button type="button" id="modal-btn-visualize-unit" class="btn-primary" style="font-size: 0.8125rem; padding: 0.4rem 0.85rem;">
+                        Inspect in Tree Visualizer
+                    </button>
+                    <button type="button" id="modal-close-footer" class="btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         Authentication & Bootstrap Modal (Phase 3D)
+         ========================================================= -->
+    <div id="login-modal" class="modal-backdrop">
+        <div class="modal-dialog" style="max-width: 440px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="auth-modal-title">Sign In to MedicineGuard</h3>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Secure cryptographic access control</p>
+                </div>
+                <button type="button" id="login-modal-close" class="modal-close-btn" aria-label="Close Modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Nav Tabs: Login vs Bootstrap -->
+                <div class="auth-tab-nav">
+                    <button type="button" id="tab-login" class="auth-tab-btn active">Sign In</button>
+                    <button type="button" id="tab-bootstrap" class="auth-tab-btn">Bootstrap Admin</button>
+                </div>
+
+                <!-- Alert banner for errors -->
+                <div id="auth-alert" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.8125rem; margin-bottom: 1rem;"></div>
+
+                <!-- Sign In Form -->
+                <form id="form-login" novalidate>
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="login-email" class="form-input" required placeholder="user@medicineguard.local">
+                    </div>
+                    <div style="margin-bottom: 1.25rem;">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="login-password" class="form-input" required placeholder="••••••••••••">
+                    </div>
+                    <button type="submit" id="btn-submit-login" class="btn-primary" style="width: 100%; justify-content: center;">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Initial Admin Bootstrap Form -->
+                <form id="form-bootstrap" novalidate style="display: none;">
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label">Bootstrap Admin Secret</label>
+                        <input type="password" id="bootstrap-secret" class="form-input" required placeholder="BOOTSTRAP_ADMIN_SECRET">
+                        <span style="font-size: 0.7rem; color: var(--color-slate-500);">Configured in .dev.vars on server</span>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label">Admin Email</label>
+                        <input type="email" id="bootstrap-email" class="form-input" required placeholder="admin@medicineguard.local">
+                    </div>
+                    <div style="margin-bottom: 1.25rem;">
+                        <label class="form-label">Admin Password (min 8 chars)</label>
+                        <input type="password" id="bootstrap-password" class="form-input" required placeholder="••••••••••••">
+                    </div>
+                    <button type="submit" id="btn-submit-bootstrap" class="btn-primary" style="width: 100%; justify-content: center;">
+                        Initialize Admin Account
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span style="font-size: 0.75rem; color: var(--color-slate-500);">
+                    PBKDF2-HMAC-SHA256 (600,000 iterations)
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         Ambiguous Unit ID Resolution Modal (Phase 3D)
+         ========================================================= -->
+    <div id="ambiguous-modal" class="modal-backdrop">
+        <div class="modal-dialog" style="max-width: 550px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="color: var(--color-warning);">Ambiguous Unit Serial Detected</h3>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">This Unit ID is registered across multiple batches. Please choose the batch.</p>
+                </div>
+                <button type="button" id="ambiguous-modal-close" class="modal-close-btn" aria-label="Close Modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.8125rem; color: var(--color-slate-600); margin-bottom: 1rem;">
+                    Unit Serial <code id="ambiguous-unit-serial" class="font-mono">--</code> was found in multiple published batches in the shared registry. Select which batch to inspect and verify:
+                </p>
+                <div id="ambiguous-matches-list">
+                    <!-- Populated dynamically with match cards -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="ambiguous-modal-cancel" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         Admin Password Reset Modal (Phase 3D)
+         ========================================================= -->
+    <div id="admin-reset-modal" class="modal-backdrop">
+        <div class="modal-dialog" style="max-width: 420px;">
+            <div class="modal-header">
+                <div>
+                    <h3>Admin Password Reset</h3>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Set a new temporary password for user</p>
+                </div>
+                <button type="button" id="admin-reset-modal-close" class="modal-close-btn" aria-label="Close Modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.8125rem; color: var(--color-slate-600); margin-bottom: 1rem;">
+                    Target User: <strong id="admin-reset-target-email">--</strong>
+                </p>
+                <form id="admin-reset-form">
+                    <div style="margin-bottom: 1.25rem;">
+                        <label class="form-label">New Password (min 8 chars)</label>
+                        <input type="password" id="admin-reset-new-password" class="form-input" required placeholder="••••••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        Confirm Password Reset
+                    </button>
+                </form>
+                <div id="admin-reset-feedback" style="margin-top: 0.75rem; font-size: 0.8125rem; display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="admin-reset-cancel" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         Manufacturer QR Code View / Download Modal
+         ========================================================= -->
+    <div id="mfg-qr-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card" style="max-width: 480px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="mfg-qr-modal-title">Medicine Unit QR Code</h3>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Serialized Verification Token & Offline QR</p>
+                </div>
+                <button type="button" id="mfg-qr-modal-close" class="modal-close-btn" aria-label="Close QR Modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div class="qr-preview-box">
+                    <canvas id="mfg-qr-canvas" style="display: block; border-radius: 8px;"></canvas>
+                </div>
+
+                <div style="text-align: left; background-color: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8125rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span style="color: var(--color-slate-500);">Unit ID:</span>
+                        <strong id="mfg-qr-unit-id" class="font-mono">--</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <span style="color: var(--color-slate-500);">Batch ID:</span>
+                        <strong id="mfg-qr-batch-id" class="font-mono">--</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-slate-500);">Reference:</span>
+                        <code id="mfg-qr-reference" style="font-size: 0.75rem;">--</code>
+                    </div>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 1rem;">
+                    <label class="form-label">Customer Verification URL</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="mfg-qr-url-input" class="form-input" readonly style="font-size: 0.75rem; font-family: var(--font-mono);">
+                        <button type="button" id="mfg-qr-copy-btn" class="btn-secondary" style="padding: 0.4rem 0.75rem; white-space: nowrap;">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                <button type="button" id="mfg-qr-download-btn" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.4rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download PNG
+                </button>
+                <button type="button" id="mfg-qr-close-btn" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Locally Bundled Vendor Libraries for QR Generation & Scanning (Zero Remote CDNs) -->
+    <script src="js/vendor/qrcode.js"></script>
+    <script src="js/vendor/jsqr.js"></script>
+
+    <!-- Application Controller Logic -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
+
