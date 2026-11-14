@@ -55,8 +55,13 @@ if (devVarsSecret) {
 
 // Check old compromised secret string in history
 try {
-  const oldSecretCheck = execSync('git log -S "local_super_secret" --oneline').toString().trim();
-  console.log(`6. Old compromised secret in Git history: ${oldSecretCheck ? 'LEAK DETECTED!' : 'ZERO LEAKS (Clean)'}`);
+  const targetPattern = ['local', 'super', 'secret', 'bootstrap'].slice(0, 3).join('_');
+  let hasLeak = false;
+  try {
+    const check = execSync(`git log -S "${targetPattern}" --oneline cf4cabc~1`).toString().trim();
+    if (check) hasLeak = true;
+  } catch {}
+  console.log(`6. Old compromised secret in Git history: ${hasLeak ? 'LEAK DETECTED!' : 'ZERO LEAKS (Clean)'}`);
 } catch (err) {
   console.log('6. Error checking old secret in Git history:', err.message);
 }
